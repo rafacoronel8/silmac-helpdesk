@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="login-container">
+
+    <h2>Login Admin</h2>
+
+    <input type="text" id="username" placeholder="Utilizador">
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="login()">Entrar</button>
+
+    <p id="error" style="color:red;"></p>
+
+</div>
+
+<script>
+async function login() {
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        window.location.href = "/dashboard";
+    } else {
+        document.getElementById('error').innerText = "Credenciais inválidas";
+    }
+}
+</script>
+
+</body>
+</html>

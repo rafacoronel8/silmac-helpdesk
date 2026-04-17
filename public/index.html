@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silmac Help Desk</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="images/silmac.ico">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1>
+                <i class="fas fa-headset"></i> Silmac Help Desk
+            </h1>
+
+            <div class="nav-tabs">
+                <a href="/" class="nav-tab active">
+                    <i class="fas fa-user"></i> Criar Ticket
+                </a>
+
+                <a href="#" class="nav-tab" onclick="openLogin()">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    
+
+    <!-- CONTAINER -->
+    <div class="container">
+
+        <div class="ticket-form-card">
+            <h2>
+                <i class="fas fa-plus-circle"></i> Criar Ticket
+            </h2>
+
+            <form id="ticketForm">
+
+                <!-- NOME -->
+                <div class="form-group">
+                    <label for="userName">Nome *</label>
+                    <input type="text" id="userName" required>
+                </div>
+
+                <!-- DEPARTAMENTO -->
+                <div class="form-group">
+                    <label for="department">Departamento</label>
+                    <select id="department">
+                        <option value="">Selecionar</option>
+                        <option value="RH">RH</option>
+                        <option value="Recepcao">Recepcao</option>
+                        <option value="Contabilidade">Contabilidade</option>
+                        <option value="Gestor HSSG">Gestao</option>
+                        <option value="Financeiro">Financeiro</option>
+                        <option value="Vendas">Vendas</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="TI">TI</option>
+                        <option value="Geral">Direcao Geral</option>
+                        <option value="Vigilancia">Vigilancia Humana</option>
+                        <option value="Comercial">Comercial</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+
+                <!-- ILHA -->
+                <div class="form-group">
+                    <label for="ilha">Ilha *</label>
+                    <select id="ilha" required>
+                        <option value="">Selecionar Ilha</option>
+                        <option value="Santo Antão">Santo Antão</option>
+                        <option value="São Vicente">São Vicente</option>
+                        <option value="Sal">Sal</option>
+                        <option value="Boa Vista">Boa Vista</option>
+                        <option value="Maio">Maio</option>
+                        <option value="Santiago">Santiago</option>
+                        <option value="Fogo">Fogo</option>
+                        <option value="Brava">Brava</option>
+                    </select>
+                </div>
+
+                <!-- PROBLEMA + PRIORIDADE -->
+                <div class="form-group">
+                    <label for="category">Tipo de Problema *</label>
+                    <select id="category" required>
+                        <option value="">Selecionar problema</option>
+                        <option value="Email não funciona|Media">Email não funciona</option>
+                        <option value="Email não funciona|Alta">Email Suspeito</option>
+                        <option value="Issues Backup|Alta">Backup</option>
+                        <option value="Internet/Rede|Alta">Internet/Rede não funciona</option>
+                        <option value="Software|Media">Programa não abre</option>
+                        <option value="Hardware|Alta">Hardware/Impressora</option>
+                        <option value="Senha|Media">Esqueci a senha</option>
+                        <option value="VPN|Alta">VPN não conecta</option>
+                        <option value="Office|Media">Office desatualizado</option>
+                        <option value="Email não funciona|Baixa">Telefone</option>
+                        <option value="Primavera|Media">Primavera</option>
+                        <option value="Documento|Baixa">Ajuda com algum documento</option>
+                        <option value="Outro|Baixa">Outro problema</option>
+                    </select>
+                </div>
+
+                <!-- DESCRIÇÃO -->
+                <div class="form-group">
+                    <label for="description">Descrição</label>
+                    <textarea id="description" rows="5" placeholder="Descreve o problema..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-paper-plane"></i> Criar Ticket
+                </button>
+
+            </form>
+        </div>
+
+    </div>
+
+    <!-- LOGIN MODAL -->
+<div id="loginModal" class="login-modal" style="display:none;">
+    <div class="ticket-form-card" style="max-width: 400px;">
+
+        <h2 style="text-align:center; margin-bottom: 1.5rem;">
+            <i class="fas fa-lock"></i> Acesso ao Dashboard
+        </h2>
+
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="loginUser" placeholder="Introduz o username">
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="loginPass" placeholder="Introduz a password">
+        </div>
+
+        <button class="btn-primary" onclick="login()">
+            <i class="fas fa-sign-in-alt"></i> Entrar
+        </button>
+
+        <button class="btn-secondary" onclick="closeLogin()" style="margin-top:10px;">
+            Cancelar
+        </button>
+
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

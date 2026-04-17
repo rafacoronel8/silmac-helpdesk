@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets Help Desk - Silmac</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="images/silmac.ico">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+
+            <h1>
+                <i class="fas fa-tachometer-alt"></i> Dashboard Tickets Silmac
+            </h1>
+
+            <div class="nav-tabs">
+                <a href="/" class="nav-tab">
+                    Criar Ticket
+                </a>
+
+                <a href="/dashboard" class="nav-tab active">
+                    Dashboard
+                </a>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- CONTAINER -->
+    <div class="container">
+
+        <!-- STATS -->
+        <div class="dashboard-header">
+            <h2>Resumo de Tickets</h2>
+
+            <div class="stats">
+                <div class="stat-card high">
+                    <span id="highCount">0</span>
+                    <small>ALTA</small>
+                </div>
+
+                <div class="stat-card medium">
+                    <span id="mediumCount">0</span>
+                    <small>MÉDIA</small>
+                </div>
+
+                <div class="stat-card low">
+                    <span id="lowCount">0</span>
+                    <small>BAIXA</small>
+                </div>
+
+                <div class="stat-card">
+                    <span id="resolvedCount">0</span>
+                    <small>RESOLVIDOS</small>
+                </div>
+
+                <div class="stat-card">
+                    <span id="andamentoCount">0</span>
+                    <small>EM ANDAMENTO</small>
+                </div>
+
+                <div class="stat-card">
+                    <span id="pausaCount">0</span>
+                    <small>EM PAUSA</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTROS -->
+        <div class="filters">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Pesquisar tickets..."
+            >
+
+            <select id="filterStatus">
+                <option value="">Todos</option>
+                <option value="Aberto">Aberto</option>
+                <option value="Em Andamento">Em Andamento</option>
+                <option value="Em Pausa">Em Pausa</option>
+                <option value="Resolvido">Resolvido</option>
+            </select>
+
+            <select id="filterPriority">
+                <option value="">Todas prioridades</option>
+                <option value="Alta">Alta</option>
+                <option value="Media">Media</option>
+                <option value="Baixa">Baixa</option>
+            </select>
+
+        </div>
+
+        <!-- TICKETS -->
+        <div class="tickets-grid" id="ticketsGrid"></div>
+
+    </div>
+
+    <div id="solutionModal" class="login-modal" style="display:none;">
+        <div class="ticket-form-card" style="max-width: 500px;">
+
+            <h2 style="text-align:center; margin-bottom: 1rem;">
+                <i class="fas fa-check-circle"></i> Resolver Ticket
+            </h2>
+
+            <textarea id="solutionText" rows="5" placeholder="Descreve a solução..."></textarea>
+
+            <button class="btn-primary" onclick="dashboard.saveSolution()">
+                Guardar
+            </button>
+
+            <button class="btn-secondary" onclick="dashboard.closeSolutionModal()" style="margin-top:10px;">
+                Cancelar
+            </button>
+
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+
+</body>
+</html>
