@@ -183,8 +183,8 @@ body {
 }
 
 /* CORES DAS PRIORIDADES (ALINHADO COM DB) */
-.stat-card.high { border-left: 5px solid #ed8936; }
-.stat-card.medium { border-left: 5px solid #f6ad55; }
+.stat-card.high { border-left: 5px solid #ff0505; }
+.stat-card.medium { border-left: 5px solid #e2912d; }
 .stat-card.low { border-left: 5px solid #48bb78; }
 
 /* FILTROS */
@@ -230,7 +230,7 @@ body {
 }
 
 /* PRIORIDADE CORES (DB COMPATÍVEL) */
-.ticket-card.alta { border-left-color: #ed8936; }
+.ticket-card.alta { border-left-color: #ff0505; }
 .ticket-card.media { border-left-color: #f6ad55; }
 .ticket-card.baixa { border-left-color: #48bb78; }
 
@@ -256,7 +256,7 @@ body {
     color: white;
 }
 
-.priority-badge.alta { background: #ed8936; }
+.priority-badge.alta { background: #ff0505; }
 .priority-badge.media { background: #f6ad55; }
 .priority-badge.baixa { background: #48bb78; }
 
