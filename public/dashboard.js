@@ -9,6 +9,22 @@ function escapeHtml(str) {
         .replace(/'/g, "&#039;");
 }
 
+// 🔎 NORMALIZAR TEXTO (remove acentos)
+function normalize(str) {
+    return str
+        ?.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}
+
+// 🎯 HIGHLIGHT
+function highlight(text, search) {
+    if (!search) return escapeHtml(text);
+
+    const regex = new RegExp(`(${search})`, 'gi');
+    return escapeHtml(text).replace(regex, '<mark>$1</mark>');
+}
+
 const dashboard = {
 
     tickets: [],
@@ -21,7 +37,15 @@ const dashboard = {
         const filterStatus = document.getElementById('filterStatus');
         const filterPriority = document.getElementById('filterPriority');
 
-        if (searchInput) searchInput.addEventListener('input', () => this.render());
+        let debounceTimer;
+
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => this.render(), 300);
+            });
+        }
+
         if (filterStatus) filterStatus.addEventListener('change', () => this.render());
         if (filterPriority) filterPriority.addEventListener('change', () => this.render());
     },
@@ -106,15 +130,48 @@ const dashboard = {
         const grid = document.getElementById('ticketsGrid');
         if (!grid) return;
 
-        const search = (document.getElementById('searchInput')?.value || "").toLowerCase();
+        const search = (document.getElementById('searchInput')?.value || "").trim();
         const status = document.getElementById('filterStatus')?.value || "";
         const priority = document.getElementById('filterPriority')?.value || "";
 
-        const filtered = this.tickets.filter(t =>
-            (!search || t.nome?.toLowerCase().includes(search) || t.motivo?.toLowerCase().includes(search)) &&
-            (!status || t.estado === status || (status === "Aberto" && t.estado === "Pendente")) &&
-            (!priority || t.prioridade === priority)
-        );
+        const searchNormalized = normalize(search);
+        const keywords = searchNormalized.split(" ").filter(k => k);
+
+        let filtered = this.tickets.filter(t => {
+
+            const rawText = `
+                ${t.nome}
+                ${t.motivo}
+                ${t.descricao}
+                ${t.departamento}
+                ${t.ilha}
+                ${t.solucao || ''}
+            `;
+
+            const text = normalize(rawText);
+
+            const matchSearch = !search || keywords.every(k => text.includes(k));
+
+            const matchStatus =
+                !status ||
+                t.estado === status ||
+                (status === "Aberto" && t.estado === "Pendente");
+
+            const matchPriority =
+                !priority ||
+                t.prioridade === priority;
+
+            return matchSearch && matchStatus && matchPriority;
+        });
+
+        // 🚀 Ordenação por relevância simples
+        if (search) {
+            filtered.sort((a, b) => {
+                const aMatch = normalize(a.motivo).includes(searchNormalized);
+                const bMatch = normalize(b.motivo).includes(searchNormalized);
+                return bMatch - aMatch;
+            });
+        }
 
         grid.innerHTML = "";
 
@@ -137,12 +194,14 @@ const dashboard = {
                     </span>
                 </div>
 
-                <div class="ticket-title">${escapeHtml(t.motivo)}</div>
+                <div class="ticket-title">
+                    ${highlight(t.motivo, search)}
+                </div>
 
                 <div class="ticket-meta">
-                    <span>👤 ${escapeHtml(t.nome)}</span>
-                    <span>🏢 ${escapeHtml(t.departamento)}</span>
-                    <span>📍 ${escapeHtml(t.ilha)}</span>
+                    <span>👤 ${highlight(t.nome, search)}</span>
+                    <span>🏢 ${highlight(t.departamento, search)}</span>
+                    <span>📍 ${highlight(t.ilha, search)}</span>
                 </div>
 
                 <div class="status-badge-box">
@@ -156,7 +215,7 @@ const dashboard = {
 
                 <div class="ticket-description">
                     <strong>📄 Descrição:</strong><br>
-                    ${escapeHtml(t.descricao)}
+                    ${highlight(t.descricao, search)}
                 </div>
 
                 <div class="ticket-description">
@@ -167,7 +226,7 @@ const dashboard = {
                 ${t.solucao ? `
                 <div class="ticket-description">
                     <strong>🛠 Solução:</strong><br>
-                    ${escapeHtml(t.solucao)}
+                    ${highlight(t.solucao, search)}
                 </div>` : ""}
             `;
 
