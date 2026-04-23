@@ -17,6 +17,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
+app.use((req, res, next) => {
+    const host = req.headers.host;
+    if (host !== 'helpdesk.silmac.cv' && host !== 'www.helpdesk.silmac.cv') {
+        return res.redirect(301, 'http://helpdesk.silmac.cv' + req.url);
+    }
+    next();
+});
+
+
 
 // =======================
 // SESSÃO
