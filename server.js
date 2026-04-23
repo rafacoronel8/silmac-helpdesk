@@ -209,7 +209,7 @@ app.delete('/tickets/:id', requireAuth, (req, res) => {
 // =======================
 // SERVER
 // =======================
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 6080;
 
 app.listen(6080, '0.0.0.0', () => {
     console.log(`Servidor a correr em http://localhost:${PORT}`);
