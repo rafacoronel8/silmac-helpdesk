@@ -85,7 +85,7 @@ const app = {
 
         // ✅ VALIDAÇÃO IMPORTANTE
         if (!nome || !motivo || !prioridade) {
-            alert("Preenche todos os campos obrigatórios!");
+            showToast("Preenche todos os campos obrigatórios!", false);
             return;
         }
 
@@ -110,11 +110,11 @@ const app = {
             const data = await res.json();
 
             if (!res.ok) {
-                alert(data.error || "Erro ao criar ticket");
+                showToast("Erro ao criar ticket", false);
                 return;
             }
 
-            alert('✅ Ticket criado com sucesso!');
+            showToast('✅ Ticket criado com sucesso!', true);
             document.getElementById('ticketForm')?.reset();
 
             await this.loadTickets();
@@ -235,12 +235,19 @@ const app = {
 
 // 🔐 LOGIN (mantido)
 function openLogin() {
-    document.getElementById('loginModal').style.display = 'block';
+    document.getElementById('loginModal').classList.add('open');
+    setTimeout(() => document.getElementById('loginUser').focus(), 100);
 }
 
 function closeLogin() {
-    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('loginModal').classList.remove('open');
+    document.getElementById('loginError').textContent = '';
 }
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLogin();
+    if (e.key === 'Enter' && document.getElementById('loginModal').classList.contains('open')) login();
+});
 
 async function login() {
     const username = document.getElementById('loginUser').value;
@@ -265,6 +272,45 @@ async function login() {
         console.error(err);
     }
 }
+
+function showToast(msg, ok = true) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.style.borderColor = ok ? 'var(--success)' : 'var(--danger)';
+    t.style.color = ok ? 'var(--success)' : 'var(--danger)';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+document.getElementById('ticketForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const nome = document.getElementById('userName').value;
+    const departamento = document.getElementById('department').value;
+    const ilha = document.getElementById('ilha').value;
+    const categoryValue = document.getElementById('category').value || "";
+    const [motivo, prioridade] = categoryValue.split('|');
+    const descricao = document.getElementById('description').value;
+
+    if (!nome || !motivo || !prioridade) {
+        showToast('Preenche todos os campos obrigatórios!', false);
+        return;
+    }
+
+    try {
+        const res = await fetch('/tickets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, departamento, ilha, motivo, descricao, prioridade })
+        });
+        const data = await res.json();
+        if (!res.ok) { showToast(data.error || 'Erro ao criar ticket', false); return; }
+        showToast('Ticket criado com sucesso! Apoio a caminho...');
+        document.getElementById('ticketForm').reset();
+        loadHeroStats();
+    } catch (error) {
+        showToast('Erro ao criar ticket', false);
+    }
+});
 
 // UX
 window.onclick = function(e) {

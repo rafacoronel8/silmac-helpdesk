@@ -4,72 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Silmac Help Desk</title>
-
-    <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="images/silmac.ico">
+    <link rel="stylesheet" href="styleIndex.css">
 </head>
-
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <h1>
-                <i class="fas fa-headset"></i> Silmac Help Desk
-            </h1>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-brand">
+            <div class="icon-wrap"><i class="fas fa-headset"></i></div>
+            Silmac Help Desk
+        </a>
+        <div class="nav-tabs">
+            <a href="/" class="nav-tab active"><i class="fas fa-ticket-alt"></i> Criar Ticket</a>
+            <a href="#" class="nav-tab" onclick="openLogin()"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        </div>
+    </div>
+</nav>
 
-            <div class="nav-tabs">
-                <a href="/" class="nav-tab active">
-                    <i class="fas fa-user"></i> Criar Ticket
-                </a>
-
-                <a href="#" class="nav-tab" onclick="openLogin()">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
+<div class="main">
+    <div class="hero-left">
+        <div class="hero-label">
+            <span class="dot"></span>
+            Suporte Técnico em Linha
+        </div>
+        <h1 class="hero-title">
+            Precisas de<br>
+            <span>Ajuda Técnica?</span>
+        </h1>
+        <p class="hero-desc">
+            Submete o teu pedido de suporte e a equipa de TI da Silmac irá tratar do teu problema o mais rápido possível.
+        </p>
+        
+        <div class="features">
+            <div class="feature-item">
+                <div class="feature-icon blue"><i class="fas fa-bolt"></i></div>
+                <div class="feature-text">
+                    <strong>Resposta Rápida</strong>
+                    <small>Tickets de Alta prioridade são tratados primeiro.</small>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon purple"><i class="fas fa-shield-alt"></i></div>
+                <div class="feature-text">
+                    <strong>Seguro e Privado</strong>
+                    <small>As tuas informações estão protegidas com XSS prevention.</small>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon green"><i class="fas fa-map-marker-alt"></i></div>
+                <div class="feature-text">
+                    <strong>Todas as Ilhas</strong>
+                    <small>Suporte disponível em todo o arquipélago de Cabo Verde.</small>
+                </div>
             </div>
         </div>
-    </nav>
+    </div>
 
-    
+    <div class="form-card">
+        <div class="form-card-header">
+            <div class="icon"><i class="fas fa-plus"></i></div>
+            <div>
+                <div class="form-card-title">Novo Ticket</div>
+                <div class="form-card-subtitle">Preenche os campos obrigatórios *</div>
+            </div>
+        </div>
 
-    <!-- CONTAINER -->
-    <div class="container">
-
-        <div class="ticket-form-card">
-            <h2>
-                <i class="fas fa-plus-circle"></i> Criar Ticket
-            </h2>
-
-            <form id="ticketForm">
-
-                <!-- NOME -->
-                <div class="form-group">
-                    <label for="userName">Nome *</label>
-                    <input type="text" id="userName" required>
-                </div>
-
-                <!-- DEPARTAMENTO -->
+        <form id="ticketForm">
+            <div class="form-group">
+                <label for="userName">Nome *</label>
+                <input type="text" id="userName" placeholder="O teu nome completo" required>
+            </div>
+            <div class="form-row">
                 <div class="form-group">
                     <label for="department">Departamento</label>
                     <select id="department">
                         <option value="">Selecionar</option>
                         <option value="RH">RH</option>
-                        <option value="Recepcao">Recepcao</option>
+                        <option value="Recepcao">Receção</option>
                         <option value="Contabilidade">Contabilidade</option>
-                        <option value="Gestor HSSG">Gestao</option>
+                        <option value="Gestor HSSG">Gestão</option>
                         <option value="Financeiro">Financeiro</option>
                         <option value="Vendas">Vendas</option>
                         <option value="Marketing">Marketing</option>
                         <option value="TI">TI</option>
-                        <option value="Geral">Direcao Geral</option>
-                        <option value="Vigilancia">Vigilancia Humana</option>
+                        <option value="Geral">Direção Geral</option>
+                        <option value="Vigilancia">Vigilância Humana</option>
                         <option value="Comercial">Comercial</option>
                         <option value="Outro">Outro</option>
                     </select>
                 </div>
-
-                <!-- ILHA -->
                 <div class="form-group">
                     <label for="ilha">Ilha *</label>
                     <select id="ilha" required>
@@ -84,72 +110,106 @@
                         <option value="Brava">Brava</option>
                     </select>
                 </div>
-
-                <!-- PROBLEMA + PRIORIDADE -->
-                <div class="form-group">
-                    <label for="category">Tipo de Problema *</label>
-                    <select id="category" required>
-                        <option value="">Selecionar problema</option>
-                        <option value="Email não funciona|Media">Email não funciona</option>
-                        <option value="Email suspeito|Alta">Email Suspeito</option>
-                        <option value="Issues Backup|Alta">Backup</option>
-                        <option value="Internet/Rede|Alta">Internet/Rede não funciona</option>
-                        <option value="Software|Media">Programa não abre</option>
-                        <option value="Hardware|Media">Hardware/Impressora</option>
-                        <option value="Senha|Media">Esqueci a senha</option>
-                        <option value="VPN|Alta">VPN não conecta</option>
-                        <option value="Office|Media">Office desatualizado</option>
-                        <option value="Telefone|Baixa">Telefone</option>
-                        <option value="Primavera|Media">Primavera</option>
-                        <option value="Documento|Baixa">Ajuda com algum documento</option>
-                        <option value="Outro|Baixa">Outro problema</option>
-                    </select>
-                </div>
-
-                <!-- DESCRIÇÃO -->
-                <div class="form-group">
-                    <label for="description">Descrição</label>
-                    <textarea id="description" rows="5" placeholder="Descreve o problema..."></textarea>
-                </div>
-
-                <button type="submit" class="btn-primary">
-                    <i class="fas fa-paper-plane"></i> Criar Ticket
-                </button>
-
-            </form>
-        </div>
-
-    </div>
-
-    <!-- LOGIN MODAL -->
-<div id="loginModal" class="login-modal" style="display:none;">
-    <div class="ticket-form-card" style="max-width: 400px;">
-
-        <h2 style="text-align:center; margin-bottom: 1.5rem;">
-            <i class="fas fa-lock"></i> Acesso ao Dashboard
-        </h2>
-
-        <div class="form-group">
-            <label>Username</label>
-            <input type="text" id="loginUser" placeholder="Introduz o username">
-        </div>
-
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" id="loginPass" placeholder="Introduz a password">
-        </div>
-
-        <button class="btn-primary" onclick="login()">
-            <i class="fas fa-sign-in-alt"></i> Entrar
-        </button>
-
-        <button class="btn-secondary" onclick="closeLogin()" style="margin-top:10px;">
-            Cancelar
-        </button>
-
+            </div>
+            <div class="form-group">
+                <label for="category">Tipo de Problema *</label>
+                <select id="category" required>
+                    <option value="">Selecionar problema</option>
+                    <option value="Email não funciona|Media">Email não funciona</option>
+                    <option value="Email suspeito|Alta">Email Suspeito</option>
+                    <option value="Issues Backup|Alta">Backup</option>
+                    <option value="Internet/Rede|Alta">Internet/Rede não funciona</option>
+                    <option value="Software|Media">Programa não abre</option>
+                    <option value="Hardware|Media">Hardware/Impressora</option>
+                    <option value="Senha|Media">Esqueci a senha</option>
+                    <option value="VPN|Alta">VPN não conecta</option>
+                    <option value="Office|Media">Office desatualizado</option>
+                    <option value="Telefone|Baixa">Telefone</option>
+                    <option value="Primavera|Media">Primavera</option>
+                    <option value="Documento|Baixa">Ajuda com algum documento</option>
+                    <option value="Outro|Baixa">Outro problema</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="description">Descrição</label>
+                <textarea id="description" placeholder="Descreve o problema com mais detalhe..."></textarea>
+            </div>
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane"></i> Submeter Ticket
+            </button>
+        </form>
     </div>
 </div>
 
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-title"><i class="fas fa-lock" style="color: var(--accent); margin-right: 8px;"></i>Dashboard</div>
+        <p class="modal-sub">Acesso restrito à equipa de TI</p>
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="loginUser" placeholder="Utilizador">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="loginPass" placeholder="••••••••">
+        </div>
+        <p id="loginError"></p>
+        <div class="modal-actions">
+            <button class="btn-submit" onclick="login()">
+                <i class="fas fa-sign-in-alt"></i> Entrar
+            </button>
+            <button class="btn-cancel" onclick="closeLogin()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMsg">Ticket criado com sucesso!</span>
+</div>
 <script src="script.js"></script>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <a href="#" class="brand-link">
+                    <div class="icon-wrap">G</div>
+                    <span>Silmac Safety and Security</span>
+                </a>
+                <p>Juntos cuidamos da sua Segurança</p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Produto</h4>
+                <ul class="footer-links">
+                    <li><a href="https://www.silmac.cv/">Funcionalidades</a></li>
+                    <li><a href="https://www.silmac.cv/">Soluções</a></li>
+                    <li><a href="https://www.silmac.cv/">Preços</a></li>
+                    <li><a href="https://www.silmac.cv/">Updates</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Silmac</h4>
+                <ul class="footer-links">
+                    <li><a href="https://www.silmac.cv/">Sobre Nós</a></li>
+                    <li><a href="https://www.silmac.cv/">Carreiras</a></li>
+                    <li><a href="https://www.silmac.cv/">Privacidade</a></li>
+                    <li><a href="https://www.silmac.cv/">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Silmac (Desenvolvido por Rafael Silva Coronel). Todos os direitos reservados.</p>
+            <div class="social-links">
+                <a href="https://www.facebook.com/silmac.comercial" class="social-icon">F</a>
+                <a href="#" class="social-icon">in</a>
+                <a href="https://www.instagram.com/sa_silmac/" class="social-icon">IG</a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

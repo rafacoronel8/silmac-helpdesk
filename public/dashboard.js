@@ -9,7 +9,7 @@ function escapeHtml(str) {
         .replace(/'/g, "&#039;");
 }
 
-// 🔎 NORMALIZAR TEXTO (remove acentos)
+// 🔎 NORMALIZAR TEXTO
 function normalize(str) {
     return str
         ?.toLowerCase()
@@ -17,11 +17,13 @@ function normalize(str) {
         .replace(/[\u0300-\u036f]/g, "");
 }
 
-// 🎯 HIGHLIGHT
+// 🎯 HIGHLIGHT (seguro contra regex injection)
 function highlight(text, search) {
     if (!search) return escapeHtml(text);
 
-    const regex = new RegExp(`(${search})`, 'gi');
+    const safeSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${safeSearch})`, 'gi');
+
     return escapeHtml(text).replace(regex, '<mark>$1</mark>');
 }
 
@@ -29,9 +31,14 @@ const dashboard = {
 
     tickets: [],
     selectedTicketId: null,
+    chart: null,
+    viewMode: "grid",
 
     init: async function () {
         await this.loadTickets();
+
+        // 🔁 AUTO REFRESH
+        setInterval(() => this.loadTickets(), 8000);
 
         const searchInput = document.getElementById('searchInput');
         const filterStatus = document.getElementById('filterStatus');
@@ -82,12 +89,72 @@ const dashboard = {
         document.getElementById('resolvedCount').textContent = resolved;
         document.getElementById('andamentoCount').textContent = andamento;
         document.getElementById('pausaCount').textContent = pausa;
+
+        this.renderChart(high, medium, low);
+    },
+
+    // 📊 GRÁFICO
+    renderChart: function (high, medium, low) {
+        const ctx = document.getElementById('priorityChart');
+        if (!ctx) return;
+
+        if (this.chart) this.chart.destroy();
+
+        this.chart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Alta', 'Média', 'Baixa'],
+                datasets: [{
+                    data: [high, medium, low],
+                    backgroundColor: [
+                        '#c53030',
+                        '#dd6b20',
+                        '#2f855a'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                cutout: '65%'
+            }
+        });
+    },
+
+    // 🔄 TOGGLE GRID / LIST
+    toggleView: function () {
+        const grid = document.getElementById('ticketsGrid');
+        const label = document.getElementById('viewLabel');
+        const icon = document.querySelector('.view-btn i');
+
+        if (this.viewMode === "grid") {
+            grid.classList.add('list-view');
+            this.viewMode = "list";
+
+            if (label) label.textContent = 'Lista';
+            if (icon) icon.className = 'fas fa-list';
+
+        } else {
+            grid.classList.remove('list-view');
+            this.viewMode = "grid";
+
+            if (label) label.textContent = 'Grid';
+            if (icon) icon.className = 'fas fa-th-large';
+        }
     },
 
     changeStatus: function (id, estado) {
         if (estado === "Resolvido") {
             this.selectedTicketId = id;
-            document.getElementById('solutionModal').style.display = 'flex';
+
+            document.getElementById('solutionModal').classList.add('open');
+
+            setTimeout(() => {
+                document.getElementById('solutionText')?.focus();
+            }, 100);
+
             return;
         }
 
@@ -109,10 +176,12 @@ const dashboard = {
     },
 
     saveSolution: async function () {
-        const texto = document.getElementById('solutionText').value;
+        const texto = document.getElementById('solutionText').value.trim();
 
         if (!texto) {
-            alert("Escreve a solução!");
+            const el = document.getElementById('solutionText');
+            el.style.borderColor = 'red';
+            setTimeout(() => el.style.borderColor = '', 1500);
             return;
         }
 
@@ -121,7 +190,7 @@ const dashboard = {
     },
 
     closeSolutionModal: function () {
-        document.getElementById('solutionModal').style.display = 'none';
+        document.getElementById('solutionModal').classList.remove('open');
         document.getElementById('solutionText').value = '';
         this.selectedTicketId = null;
     },
@@ -134,8 +203,8 @@ const dashboard = {
         const status = document.getElementById('filterStatus')?.value || "";
         const priority = document.getElementById('filterPriority')?.value || "";
 
-        const searchNormalized = normalize(search);
-        const keywords = searchNormalized.split(" ").filter(k => k);
+        const searchNorm = normalize(search);
+        const keywords = searchNorm ? searchNorm.split(" ").filter(k => k) : [];
 
         let filtered = this.tickets.filter(t => {
 
@@ -164,32 +233,37 @@ const dashboard = {
             return matchSearch && matchStatus && matchPriority;
         });
 
-        // 🚀 Ordenação por relevância simples
-        if (search) {
-            filtered.sort((a, b) => {
-                const aMatch = normalize(a.motivo).includes(searchNormalized);
-                const bMatch = normalize(b.motivo).includes(searchNormalized);
-                return bMatch - aMatch;
-            });
-        }
+        // 🔥 ORDENAR POR PRIORIDADE
+        filtered.sort((a, b) => {
+            const p = { "Alta": 3, "Media": 2, "Baixa": 1 };
+            return (p[b.prioridade] || 0) - (p[a.prioridade] || 0);
+        });
+
+        // 🔢 CONTADOR
+        const badge = document.getElementById('ticketCountBadge');
+        if (badge) badge.textContent = filtered.length;
 
         grid.innerHTML = "";
 
         if (filtered.length === 0) {
-            grid.innerHTML = `<div class="empty-state"><p>Nenhum ticket encontrado.</p></div>`;
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <p>Nenhum ticket encontrado.</p>
+                </div>`;
             return;
         }
 
         filtered.forEach(t => {
-            const prioridadeClass = (t.prioridade || '').toLowerCase();
+            const pc = (t.prioridade || '').toLowerCase();
 
             const div = document.createElement('div');
-            div.className = `ticket-card ${prioridadeClass}`;
+            div.className = `ticket-card ${pc}`;
 
             div.innerHTML = `
                 <div class="ticket-header">
                     <span class="ticket-id">#${escapeHtml(t.id)}</span>
-                    <span class="priority-badge ${prioridadeClass}">
+                    <span class="priority-badge ${pc}">
                         ${escapeHtml(t.prioridade)}
                     </span>
                 </div>
@@ -213,21 +287,21 @@ const dashboard = {
                     </select>
                 </div>
 
+                ${t.descricao ? `
                 <div class="ticket-description">
-                    <strong>📄 Descrição:</strong><br>
                     ${highlight(t.descricao, search)}
-                </div>
-
-                <div class="ticket-description">
-                    Estado: ${escapeHtml(t.estado)}<br>
-                    Criado: ${t.data_criacao ? new Date(t.data_criacao).toLocaleString() : "N/A"}
-                </div>
+                </div>` : ""}
 
                 ${t.solucao ? `
                 <div class="ticket-description">
                     <strong>🛠 Solução:</strong><br>
                     ${highlight(t.solucao, search)}
                 </div>` : ""}
+
+                <div class="ticket-description">
+                    Estado: ${escapeHtml(t.estado)}<br>
+                    Criado: ${t.data_criacao ? new Date(t.data_criacao).toLocaleString('pt-PT') : "N/A"}
+                </div>
             `;
 
             grid.appendChild(div);
@@ -235,4 +309,13 @@ const dashboard = {
     }
 };
 
-window.onload = () => dashboard.init();
+
+document.getElementById('solutionModal')?.addEventListener('click', function(e) {
+    if (e.target === this) dashboard.closeSolutionModal();
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') dashboard.closeSolutionModal();
+});
+
+window.onload = () => dashboard

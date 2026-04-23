@@ -3,128 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tickets Help Desk - Silmac</title>
-
-    <link rel="stylesheet" href="style.css">
+    <title>Dashboard — Silmac Help Desk</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <link rel="icon" type="image/x-icon" href="images/silmac.ico">
+    <link rel="stylesheet" href="styleDashboard.css">
 </head>
-
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="nav-container">
-
-            <h1>
-                <i class="fas fa-tachometer-alt"></i> Dashboard Tickets Silmac
-            </h1>
-
-            <div class="nav-tabs">
-                <a href="/" class="nav-tab">
-                    Criar Ticket
-                </a>
-
-                <a href="/dashboard" class="nav-tab active">
-                    Dashboard
-                </a>
-            </div>
-
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-brand">
+            <div class="icon-wrap"><i class="fas fa-headset"></i></div>
+            Silmac Help Desk
+        </a>
+        <div class="nav-tabs">
+            <a href="/" class="nav-tab"><i class="fas fa-ticket-alt"></i> Criar Ticket</a>
+            <a href="/dashboard" class="nav-tab active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <!-- CONTAINER -->
-    <div class="container">
+<div class="page">
 
-        <!-- STATS -->
-        <div class="dashboard-header">
-            <h2>Resumo de Tickets</h2>
-
-            <div class="stats">
-                <div class="stat-card high">
-                    <span id="highCount">0</span>
-                    <small>ALTA</small>
-                </div>
-
-                <div class="stat-card medium">
-                    <span id="mediumCount">0</span>
-                    <small>MÉDIA</small>
-                </div>
-
-                <div class="stat-card low">
-                    <span id="lowCount">0</span>
-                    <small>BAIXA</small>
-                </div>
-
-                <div class="stat-card">
-                    <span id="resolvedCount">0</span>
-                    <small>RESOLVIDOS</small>
-                </div>
-
-                <div class="stat-card">
-                    <span id="andamentoCount">0</span>
-                    <small>EM ANDAMENTO</small>
-                </div>
-
-                <div class="stat-card">
-                    <span id="pausaCount">0</span>
-                    <small>EM PAUSA</small>
-                </div>
-            </div>
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Dashboard de Tickets</h1>
+            <p class="page-subtitle">Gestão de suporte técnico — Silmac</p>
         </div>
-
-        <!-- FILTROS -->
-        <div class="filters">
-
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Pesquisar tickets..."
-            >
-
-            <select id="filterStatus">
-                <option value="">Todos</option>
-                <option value="Aberto">Aberto</option>
-                <option value="Em Andamento">Em Andamento</option>
-                <option value="Em Pausa">Em Pausa</option>
-                <option value="Resolvido">Resolvido</option>
-            </select>
-
-            <select id="filterPriority">
-                <option value="">Todas prioridades</option>
-                <option value="Alta">Alta</option>
-                <option value="Media">Media</option>
-                <option value="Baixa">Baixa</option>
-            </select>
-
+        <div class="live-badge">
+            <span class="live-dot"></span>
+            Atualização automática
         </div>
-
-        <!-- TICKETS -->
-        <div class="tickets-grid" id="ticketsGrid"></div>
-
     </div>
 
-    <div id="solutionModal" class="login-modal" style="display:none;">
-        <div class="ticket-form-card" style="max-width: 500px;">
+    <div class="stats-grid">
+        <div class="stat-card alta">
+            <div class="label"><span class="dot"></span> Alta</div>
+            <div class="value" id="highCount">0</div>
+        </div>
+        <div class="stat-card media">
+            <div class="label"><span class="dot"></span> Média</div>
+            <div class="value" id="mediumCount">0</div>
+        </div>
+        <div class="stat-card baixa">
+            <div class="label"><span class="dot"></span> Baixa</div>
+            <div class="value" id="lowCount">0</div>
+        </div>
+        <div class="stat-card resolved">
+            <div class="label"><i class="fas fa-check" style="font-size:10px;"></i> Resolvidos</div>
+            <div class="value" id="resolvedCount">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label"><span class="dot" style="background:var(--accent2)"></span> Em Andamento</div>
+            <div class="value" id="andamentoCount">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label"><span class="dot" style="background:var(--muted)"></span> Em Pausa</div>
+            <div class="value" id="pausaCount">0</div>
+        </div>
+    </div>
 
-            <h2 style="text-align:center; margin-bottom: 1rem;">
-                <i class="fas fa-check-circle"></i> Resolver Ticket
-            </h2>
+    <div class="dashboard-body">
 
-            <textarea id="solutionText" rows="5" placeholder="Descreve a solução..."></textarea>
+        <div class="panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <i class="fas fa-list" style="color:var(--accent); font-size:14px;"></i>
+                    Todos os Tickets
+                    <span class="panel-count" id="ticketCountBadge">0</span>
+                </div>
+                <div class="filters">
+                    <div class="search-wrap">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Pesquisar tickets...">
+                    </div>
+                    <select id="filterStatus">
+                        <option value="">Todos os estados</option>
+                        <option value="Aberto">Aberto</option>
+                        <option value="Em Andamento">Em Andamento</option>
+                        <option value="Em Pausa">Em Pausa</option>
+                        <option value="Resolvido">Resolvido</option>
+                    </select>
+                    <select id="filterPriority">
+                        <option value="">Todas as prioridades</option>
+                        <option value="Alta">Alta</option>
+                        <option value="Media">Média</option>
+                        <option value="Baixa">Baixa</option>
+                    </select>
+                    <button class="view-btn" onclick="dashboard.toggleView()">
+                        <i class="fas fa-th-large"></i>
+                        <span id="viewLabel">Grid</span>
+                    </button>
+                </div>
+            </div>
+            <div class="tickets-body">
+                <div class="tickets-grid" id="ticketsGrid">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>A carregar tickets...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="sidebar">
+            <div class="chart-panel">
+                <h3><i class="fas fa-chart-pie" style="margin-right:6px;"></i>Por Prioridade</h3>
+                <div class="chart-wrap">
+                    <canvas id="priorityChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-panel">
+                <h3><i class="fas fa-info-circle" style="margin-right:6px;"></i>Legenda</h3>
+                <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+                    <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
+                        <span style="width:10px;height:10px;border-radius:50%;background:var(--alta);flex-shrink:0;"></span>
+                        <span style="color:var(--muted);">Alta — Urgente</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
+                        <span style="width:10px;height:10px;border-radius:50%;background:var(--media);flex-shrink:0;"></span>
+                        <span style="color:var(--muted);">Média — Normal</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
+                        <span style="width:10px;height:10px;border-radius:50%;background:var(--baixa);flex-shrink:0;"></span>
+                        <span style="color:var(--muted);">Baixa — Quando possível</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- SOLUTION MODAL -->
+<div id="solutionModal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-title">
+            <i class="fas fa-check-circle" style="color:var(--success);margin-right:8px;"></i>
+            Resolver Ticket
+        </div>
+        <textarea id="solutionText" placeholder="Descreve a solução aplicada..."></textarea>
+        <div class="modal-actions">
             <button class="btn-primary" onclick="dashboard.saveSolution()">
-                Guardar
+                <i class="fas fa-save"></i> Guardar Solução
             </button>
-
-            <button class="btn-secondary" onclick="dashboard.closeSolutionModal()" style="margin-top:10px;">
-                Cancelar
-            </button>
-
+            <button class="btn-cancel" onclick="dashboard.closeSolutionModal()">Cancelar</button>
         </div>
     </div>
+</div>
+<script src="dashboard.js"></script>
 
-    <script src="dashboard.js"></script>
 
 </body>
 </html>
