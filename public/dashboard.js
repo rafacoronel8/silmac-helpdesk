@@ -318,4 +318,4 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') dashboard.closeSolutionModal();
 });
 
-window.onload = () => dashboard
+window.onload = () => dashboard.init();
