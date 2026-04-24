@@ -60,6 +60,18 @@ const dashboard = {
     loadTickets: async function () {
         try {
             const res = await fetch('/tickets');
+
+            // Sessão expirou ou não autenticado
+            if (res.status === 401) {
+                window.location.href = '/';
+                return;
+            }
+
+            if (!res.ok) {
+                console.error("Erro ao carregar tickets:", res.status);
+                return;
+            }
+
             this.tickets = await res.json();
 
             this.updateStats();
@@ -273,7 +285,7 @@ const dashboard = {
                 </div>
 
                 <div class="ticket-meta">
-                    <span>👤 ${highlight(t.nome, search)}</span>
+                    <span>👤 ${highlight(t.nome, search)}${t.contacto && t.contacto !== '---' ? ` · 📞 ${highlight(t.contacto, search)}` : ''}</span>
                     <span>🏢 ${highlight(t.departamento, search)}</span>
                     <span>📍 ${highlight(t.ilha, search)}</span>
                 </div>

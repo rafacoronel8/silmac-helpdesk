@@ -66,6 +66,10 @@ function requireAuth(req, res, next) {
     if (req.session && req.session.loggedIn) {
         return next();
     }
+    // Se for pedido de API (Accept: json ou path começa com /tickets)
+    if (req.xhr || req.headers.accept?.includes('application/json') || req.path.startsWith('/tickets')) {
+        return res.status(401).json({ error: 'Não autenticado', redirect: '/' });
+    }
     return res.redirect('/');
 }
 

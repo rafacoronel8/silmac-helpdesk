@@ -32,18 +32,13 @@ const app = {
                 this.createTicket();
             });
         }
-
-        await this.loadTickets();
-
-        setInterval(() => {
-            app.loadTickets();
-        }, 5000);
     },
 
-    // 🔄 CARREGAR TICKETS
+    // 🔄 CARREGAR TICKETS (não usado na página pública)
     loadTickets: async function () {
         try {
             const res = await fetch('/tickets');
+            if (!res.ok) return;
             const newTickets = await res.json();
 
             const newCount = newTickets.length;
