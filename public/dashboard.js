@@ -59,7 +59,9 @@ const dashboard = {
 
     loadTickets: async function () {
         try {
-            const res = await fetch('/tickets');
+            const res = await fetch('/tickets', {
+                cache: 'no-store'
+            });
 
             // Sessão expirou ou não autenticado
             if (res.status === 401) {
