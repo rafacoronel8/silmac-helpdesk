@@ -12,7 +12,7 @@ function escapeHtml(str) {
 const notificationSound = new Audio('/sounds/not.wav');
 
 const app = {
-    
+
     tickets: [],
     lastTicketCount: 0,
 
@@ -24,16 +24,8 @@ const app = {
                 notificationSound.currentTime = 0;
             }).catch(() => {});
         }, { once: true });
-        setInterval(() => {
-            app.loadTickets();
-        }, 5000);
-        await this.loadTickets();
 
         const ticketForm = document.getElementById('ticketForm');
-        const searchInput = document.getElementById('searchInput');
-        const filterStatus = document.getElementById('filterStatus');
-        const filterPriority = document.getElementById('filterPriority');
-
         if (ticketForm) {
             ticketForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -41,9 +33,11 @@ const app = {
             });
         }
 
-        if (searchInput) searchInput.addEventListener('input', () => this.renderTickets());
-        if (filterStatus) filterStatus.addEventListener('change', () => this.renderTickets());
-        if (filterPriority) filterPriority.addEventListener('change', () => this.renderTickets());
+        await this.loadTickets();
+
+        setInterval(() => {
+            app.loadTickets();
+        }, 5000);
     },
 
     // 🔄 CARREGAR TICKETS
@@ -52,22 +46,16 @@ const app = {
             const res = await fetch('/tickets');
             const newTickets = await res.json();
 
-            // 📊 contar tickets
             const newCount = newTickets.length;
 
-            // 🔔 tocar som se aumentou
             if (this.lastTicketCount !== 0 && newCount > this.lastTicketCount) {
                 notificationSound.play().catch(err => {
                     console.log("Som bloqueado pelo browser:", err);
                 });
             }
 
-            // atualizar estado
             this.tickets = newTickets;
             this.lastTicketCount = newCount;
-
-            this.updateDashboard();
-            this.renderTickets();
 
         } catch (error) {
             console.error("Erro ao carregar tickets:", error);
@@ -76,164 +64,46 @@ const app = {
 
     // 📤 CRIAR TICKET
     createTicket: async function () {
-        const nome = document.getElementById('userName')?.value;
+        const nome = document.getElementById('userName')?.value.trim();
+        const contacto = document.getElementById('contacto')?.value.trim();
         const departamento = document.getElementById('department')?.value;
         const ilha = document.getElementById('ilha')?.value;
 
         const categoryValue = document.getElementById('category')?.value || "";
         const [motivo, prioridade] = categoryValue.split('|');
 
-        // ✅ VALIDAÇÃO IMPORTANTE
-        if (!nome || !motivo || !prioridade) {
-            showToast("Preenche todos os campos obrigatórios!", false);
+        if (!nome || !ilha || !motivo || !prioridade) {
+            showToast('Preenche todos os campos obrigatórios!', false);
             return;
         }
 
-        const descricao = document.getElementById('description')?.value;
-
-        const ticket = {
-            nome,
-            departamento,
-            ilha,
-            motivo,
-            descricao,
-            prioridade
-        };
+        const descricao = document.getElementById('description')?.value.trim();
 
         try {
             const res = await fetch('/tickets', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(ticket)
+                body: JSON.stringify({ nome, contacto, departamento, ilha, motivo, descricao, prioridade })
             });
 
             const data = await res.json();
 
-            if (!res.ok) {
-                showToast("Erro ao criar ticket", false);
+            if (!res.ok || !data.success) {
+                showToast(data.error || 'Erro ao criar ticket', false);
                 return;
             }
 
-            showToast('✅ Ticket criado com sucesso!', true);
-            document.getElementById('ticketForm')?.reset();
+            showToast('Ticket criado com sucesso! Apoio a caminho...', true);
+            document.getElementById('ticketForm').reset();
 
-            await this.loadTickets();
         } catch (error) {
             console.error("Erro ao criar ticket:", error);
+            showToast('Erro ao criar ticket. Tenta novamente.', false);
         }
-    },
-
-    // 🔁 ALTERAR ESTADO (CORRIGIDO)
-    changeStatus: async function (ticketId, newStatus) {
-        try {
-            await fetch(`/tickets/${ticketId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ estado: newStatus })
-            });
-
-            await this.loadTickets();
-        } catch (error) {
-            console.error("Erro ao alterar estado:", error);
-        }
-    },
-
-    // 📊 DASHBOARD
-    updateDashboard: function () {
-        const counts = {
-            Alta: 0,
-            Media: 0,
-            Baixa: 0,
-            Resolvidos: 0,
-            Andamento: 0,
-            Pausa: 0
-        };
-
-        this.tickets.forEach(t => {
-            if (t.prioridade) {
-                counts[t.prioridade] = (counts[t.prioridade] || 0) + 1;
-            }
-
-            if (t.estado === 'Resolvido') counts.Resolvidos++;
-            else if (t.estado === 'Em Andamento') counts.Andamento++;
-            else if (t.estado === 'Em Pausa') counts.Pausa++;
-        });
-
-        document.getElementById('highCount').textContent = counts.Alta || 0;
-        document.getElementById('mediumCount').textContent = counts.Media || 0;
-        document.getElementById('lowCount').textContent = counts.Baixa || 0;
-
-        document.getElementById('tasksDoneCount').textContent = counts.Resolvidos || 0;
-    },
-
-    // 🎨 RENDER TICKETS
-    renderTickets: function () {
-        const grid = document.getElementById('ticketsGrid');
-        if (!grid) return;
-
-        const search = (document.getElementById('searchInput')?.value || "").toLowerCase();
-        const statusFilter = document.getElementById('filterStatus')?.value || "";
-        const priorityFilter = document.getElementById('filterPriority')?.value || "";
-
-        grid.innerHTML = "";
-
-        const filtered = this.tickets.filter(t =>
-            (!search || t.nome?.toLowerCase().includes(search) || t.motivo?.toLowerCase().includes(search)) &&
-            (!statusFilter || t.estado === statusFilter || (statusFilter === "Aberto" && t.estado === "Pendente")) &&
-            (!priorityFilter || t.prioridade === priorityFilter)
-        );
-
-        if (filtered.length === 0) {
-            grid.innerHTML = `<div class="empty-state"><p>Nenhum ticket encontrado.</p></div>`;
-            return;
-        }
-
-        filtered.forEach(t => {
-            const prioridadeClass = (t.prioridade || '').toLowerCase();
-
-            const div = document.createElement('div');
-            div.className = `ticket-card ${prioridadeClass}`;
-
-            div.innerHTML = `
-                <div class="ticket-header">
-                    <span class="ticket-id">#${escapeHtml(t.id)}</span>
-
-                    <span class="priority-badge ${prioridadeClass}">
-                        ${escapeHtml(t.prioridade || 'N/A')}
-                    </span>
-                </div>
-
-                <div class="ticket-title">
-                    ${escapeHtml(t.motivo || 'Sem motivo')}
-                </div>
-
-                <div class="ticket-meta">
-                    <span>👤 ${escapeHtml(t.nome)}</span>
-                    <span>🏢 ${escapeHtml(t.departamento)}</span>
-                    <span>📍 ${escapeHtml(t.ilha)}</span>
-                </div>
-
-                <div class="status-badge-box">
-                    <select onchange="app.changeStatus(${t.id}, this.value)">
-                        <option value="Aberto" ${t.estado === 'Aberto' ? 'selected' : ''}>Aberto</option>
-                        <option value="Em Andamento" ${t.estado === 'Em Andamento' ? 'selected' : ''}>Em Andamento</option>
-                        <option value="Em Pausa" ${t.estado === 'Em Pausa' ? 'selected' : ''}>Em Pausa</option>
-                        <option value="Resolvido" ${t.estado === 'Resolvido' ? 'selected' : ''}>Resolvido</option>
-                    </select>
-                </div>
-
-                <div class="ticket-description">
-                    Estado: ${escapeHtml(t.estado)}<br>
-                    Criado em: ${t.data_criacao ? new Date(t.data_criacao).toLocaleString() : 'N/A'}
-                </div>
-            `;
-
-            grid.appendChild(div);
-        });
     }
 };
 
-// 🔐 LOGIN (mantido)
+// 🔐 LOGIN
 function openLogin() {
     document.getElementById('loginModal').classList.add('open');
     setTimeout(() => document.getElementById('loginUser').focus(), 100);
@@ -244,14 +114,14 @@ function closeLogin() {
     document.getElementById('loginError').textContent = '';
 }
 
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeLogin();
-    if (e.key === 'Enter' && document.getElementById('loginModal').classList.contains('open')) login();
-});
-
 async function login() {
-    const username = document.getElementById('loginUser').value;
+    const username = document.getElementById('loginUser').value.trim();
     const password = document.getElementById('loginPass').value;
+
+    if (!username || !password) {
+        document.getElementById('loginError').textContent = 'Preenche os dois campos.';
+        return;
+    }
 
     try {
         const res = await fetch('/login', {
@@ -265,11 +135,11 @@ async function login() {
         if (data.success) {
             window.location.href = '/dashboard';
         } else {
-            alert('❌ Credenciais inválidas');
-            closeLogin();
+            document.getElementById('loginError').textContent = data.error || '❌ Credenciais inválidas';
         }
     } catch (err) {
         console.error(err);
+        document.getElementById('loginError').textContent = 'Erro de ligação. Tenta novamente.';
     }
 }
 
@@ -282,45 +152,17 @@ function showToast(msg, ok = true) {
     setTimeout(() => t.classList.remove('show'), 3500);
 }
 
-document.getElementById('ticketForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const nome = document.getElementById('userName').value;
-    const departamento = document.getElementById('department').value;
-    const ilha = document.getElementById('ilha').value;
-    const categoryValue = document.getElementById('category').value || "";
-    const [motivo, prioridade] = categoryValue.split('|');
-    const descricao = document.getElementById('description').value;
-
-    if (!nome || !motivo || !prioridade) {
-        showToast('Preenche todos os campos obrigatórios!', false);
-        return;
-    }
-
-    try {
-        const res = await fetch('/tickets', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nome, departamento, ilha, motivo, descricao, prioridade })
-        });
-        const data = await res.json();
-        if (!res.ok) { showToast(data.error || 'Erro ao criar ticket', false); return; }
-        showToast('Ticket criado com sucesso! Apoio a caminho...');
-        document.getElementById('ticketForm').reset();
-        loadHeroStats();
-    } catch (error) {
-        showToast('Erro ao criar ticket', false);
-    }
-});
-
-// UX
-window.onclick = function(e) {
+// Modal: fechar ao clicar fora ou pressionar Escape/Enter
+window.addEventListener('click', function (e) {
     const modal = document.getElementById('loginModal');
     if (e.target === modal) closeLogin();
-};
+});
 
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
     const modal = document.getElementById('loginModal');
-    if (e.key === 'Enter' && modal.style.display !== 'none') login();
+    if (!modal) return;
+    if (e.key === 'Escape') closeLogin();
+    if (e.key === 'Enter' && modal.classList.contains('open')) login();
 });
 
 window.onload = () => app.init();

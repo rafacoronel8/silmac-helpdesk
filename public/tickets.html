@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard — Silmac Help Desk</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <link rel="icon" type="image/x-icon" href="images/silmac.ico">
     <link rel="stylesheet" href="styleDashboard.css">
@@ -110,24 +110,24 @@
 
         <div class="sidebar">
             <div class="chart-panel">
-                <h3><i class="fas fa-chart-pie" style="margin-right:6px;"></i>Por Prioridade</h3>
+                <h3><i class="fas fa-chart-pie" style="color:var(--accent);"></i>Por Prioridade</h3>
                 <div class="chart-wrap">
                     <canvas id="priorityChart"></canvas>
                 </div>
             </div>
             <div class="chart-panel">
-                <h3><i class="fas fa-info-circle" style="margin-right:6px;"></i>Legenda</h3>
+                <h3><i class="fas fa-info-circle" style="color:var(--accent);"></i>Legenda</h3>
                 <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
                     <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
-                        <span style="width:10px;height:10px;border-radius:50%;background:var(--alta);flex-shrink:0;"></span>
+                        <span style="width:9px;height:9px;border-radius:50%;background:var(--alta);flex-shrink:0;"></span>
                         <span style="color:var(--muted);">Alta — Urgente</span>
                     </div>
                     <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
-                        <span style="width:10px;height:10px;border-radius:50%;background:var(--media);flex-shrink:0;"></span>
+                        <span style="width:9px;height:9px;border-radius:50%;background:var(--media);flex-shrink:0;"></span>
                         <span style="color:var(--muted);">Média — Normal</span>
                     </div>
                     <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
-                        <span style="width:10px;height:10px;border-radius:50%;background:var(--baixa);flex-shrink:0;"></span>
+                        <span style="width:9px;height:9px;border-radius:50%;background:var(--baixa);flex-shrink:0;"></span>
                         <span style="color:var(--muted);">Baixa — Quando possível</span>
                     </div>
                 </div>
@@ -153,8 +153,8 @@
         </div>
     </div>
 </div>
-<script src="dashboard.js"></script>
 
+<script src="dashboard.js"></script>
 
 </body>
 </html>

@@ -17,15 +17,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use((req, res, next) => {
-    const host = req.headers.host;
-    if (host !== 'helpdesk.silmac.cv' && host !== 'www.helpdesk.silmac.cv') {
-        return res.redirect(301, 'http://helpdesk.silmac.cv' + req.url);
-    }
-    next();
-});
-
-
 
 // =======================
 // SESSÃO
@@ -45,8 +36,8 @@ app.use(session({
 // RATE LIMIT LOGIN
 // =======================
 const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // janela de 15 minutos
-    max: 10,                   // máximo 10 tentativas
+    windowMs: 15 * 60 * 1000,
+    max: 10,
     message: { success: false, error: "Demasiadas tentativas. Tenta em 15 minutos." }
 });
 
@@ -127,15 +118,15 @@ app.get('/dashboard', requireAuth, (req, res) => {
 // =======================
 app.post('/tickets', (req, res) => {
 
-    const { nome, departamento, ilha, motivo, descricao, prioridade } = req.body;
+    const { nome, contacto, departamento, ilha, motivo, descricao, prioridade } = req.body;
 
     const sql = `
         INSERT INTO tickets
-        (nome, departamento, ilha, motivo, descricao, prioridade, estado, data_criacao)
-        VALUES (?, ?, ?, ?, ?, ?, 'Aberto', NOW())
+        (nome, contacto, departamento, ilha, motivo, descricao, prioridade, estado, data_criacao)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'Aberto', NOW())
     `;
 
-    db.query(sql, [nome, departamento, ilha, motivo, descricao, prioridade], (err, result) => {
+    db.query(sql, [nome, contacto || null, departamento, ilha, motivo, descricao, prioridade], (err, result) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ error: "Erro ao criar ticket" });
@@ -177,7 +168,6 @@ app.put('/tickets/:id', requireAuth, (req, res) => {
     let sql;
     let params;
 
-    // se resolvido, grava solução
     if (estado === "Resolvido") {
         sql = "UPDATE tickets SET estado=?, solucao=? WHERE id=?";
         params = [estado, solucao, id];
