@@ -135,6 +135,158 @@
         </div>
 
     </div>
+
+    <!-- ===========================
+         MATERIAIS SECTION
+    =========================== -->
+    <div class="materials-section">
+
+        <div class="materials-header">
+            <div>
+                <h2 class="materials-title">
+                    <i class="fas fa-boxes" style="color:var(--accent);"></i>
+                    Requisição de Materiais
+                </h2>
+                <p class="materials-subtitle">Registo de materiais e equipamentos necessários</p>
+            </div>
+            <button class="btn-add-material" onclick="materialsModule.openModal()">
+                <i class="fas fa-plus"></i>
+                Nova Requisição
+            </button>
+        </div>
+
+        <!-- MATERIAL QUICK PICKER -->
+        <div class="material-picker-row">
+            <p class="picker-label">Selecionar material rapidamente:</p>
+            <div class="material-chips" id="materialChips">
+
+                <!-- Cabos -->
+                <button class="chip" onclick="materialsModule.quickSelect('Cabo HDMI')" title="Cabo HDMI">
+                    <i class="fas fa-tv chip-icon"></i><span>Cabo HDMI</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Cabo de Rede (RJ45)')" title="Cabo de Rede">
+                    <i class="fas fa-network-wired chip-icon"></i><span>Cabo Rede</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Cabo USB')" title="Cabo USB">
+                    <i class="fab fa-usb chip-icon"></i><span>Cabo USB</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Cabo VGA')" title="Cabo VGA">
+                    <i class="fas fa-tv chip-icon"></i><span>Cabo VGA</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Cabo DisplayPort')" title="Cabo DisplayPort">
+                    <i class="fas fa-tv chip-icon"></i><span>DisplayPort</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Cabo de Alimentação')" title="Cabo de Alimentação">
+                    <i class="fas fa-plug chip-icon"></i><span>Alimentação</span>
+                </button>
+
+                <!-- Periféricos -->
+                <button class="chip" onclick="materialsModule.quickSelect('Teclado')" title="Teclado">
+                    <i class="fas fa-keyboard chip-icon"></i><span>Teclado</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Rato / Mouse')" title="Rato">
+                    <i class="fas fa-mouse chip-icon"></i><span>Rato</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Monitor')" title="Monitor">
+                    <i class="fas fa-desktop chip-icon"></i><span>Monitor</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Impressora')" title="Impressora">
+                    <i class="fas fa-print chip-icon"></i><span>Impressora</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Tinteiro / Toner')" title="Tinteiro">
+                    <i class="fas fa-fill-drip chip-icon"></i><span>Tinteiro</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Headset / Auriculares')" title="Headset">
+                    <i class="fas fa-headphones chip-icon"></i><span>Headset</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Webcam')" title="Webcam">
+                    <i class="fas fa-camera chip-icon"></i><span>Webcam</span>
+                </button>
+
+                <!-- Rede & Infraestrutura -->
+                <button class="chip" onclick="materialsModule.quickSelect('Switch de Rede')" title="Switch">
+                    <i class="fas fa-random chip-icon"></i><span>Switch</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Router / Access Point')" title="Router">
+                    <i class="fas fa-wifi chip-icon"></i><span>Router/AP</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Patch Panel')" title="Patch Panel">
+                    <i class="fas fa-sitemap chip-icon"></i><span>Patch Panel</span>
+                </button>
+
+                <!-- Hardware -->
+                <button class="chip" onclick="materialsModule.quickSelect('Memória RAM')" title="RAM">
+                    <i class="fas fa-memory chip-icon"></i><span>RAM</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Disco SSD')" title="SSD">
+                    <i class="fas fa-hdd chip-icon"></i><span>SSD</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Disco HDD Externo')" title="HDD">
+                    <i class="fas fa-hdd chip-icon"></i><span>HDD Externo</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Pen Drive / USB')" title="Pen Drive">
+                    <i class="fas fa-save chip-icon"></i><span>Pen Drive</span>
+                </button>
+                <button class="chip" onclick="materialsModule.quickSelect('Bateria / UPS')" title="Bateria">
+                    <i class="fas fa-battery-three-quarters chip-icon"></i><span>UPS/Bateria</span>
+                </button>
+
+                <!-- Outros -->
+                <button class="chip" onclick="materialsModule.quickSelect('Outro')" title="Outro">
+                    <i class="fas fa-box chip-icon"></i><span>Outro</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- MATERIALS TABLE -->
+        <div class="materials-table-wrap panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <i class="fas fa-clipboard-list" style="color:var(--accent); font-size:14px;"></i>
+                    Requisições Registadas
+                    <span class="panel-count" id="materialCountBadge">0</span>
+                </div>
+                <div class="filters">
+                    <div class="search-wrap">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="materialSearch" placeholder="Pesquisar materiais..." oninput="materialsModule.render()">
+                    </div>
+                    <select id="materialFilterUrgencia" onchange="materialsModule.render()">
+                        <option value="">Todas as urgências</option>
+                        <option value="Urgente">Urgente</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Baixa">Baixa</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="overflow-x:auto;">
+                <table class="materials-table" id="materialsTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Material</th>
+                            <th>Departamento</th>
+                            <th>Urgência</th>
+                            <th>Requisitado por</th>
+                            <th>Data</th>
+                            <th>Estado</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="materialsBody">
+                        <tr>
+                            <td colspan="8" class="table-empty">
+                                <i class="fas fa-box-open"></i>
+                                <p>Nenhuma requisição registada.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <!-- SOLUTION MODAL -->
@@ -154,7 +306,82 @@
     </div>
 </div>
 
+<!-- MATERIAL MODAL -->
+<div id="materialModal" class="modal-overlay">
+    <div class="modal-card modal-card-wide">
+        <div class="modal-title">
+            <i class="fas fa-boxes" style="color:var(--accent);margin-right:8px;"></i>
+            Nova Requisição de Material
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group form-group-full">
+                <label>Material <span class="req">*</span></label>
+                <div class="material-input-wrap">
+                    <input type="text" id="matMaterial" placeholder="Ex: Cabo HDMI, Teclado, Memória RAM...">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Departamento <span class="req">*</span></label>
+                <select id="matDepartamento">
+                    <option value="">Selecionar departamento</option>
+                    <option>Direção Geral</option>
+                    <option>Comercial</option>
+                    <option>Contabilidade</option>
+                    <option>Financeiro</option>
+                    <option>Informática / TI</option>
+                    <option>Gestao HSSG</option>
+                    <option>Vigilancia Humana</option>
+                    <option>Recursos Humanos</option>
+                    <option>Recepcao</option>
+                    <option>Outro</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Urgência <span class="req">*</span></label>
+                <div class="urgencia-btns" id="urgenciaBtns">
+                    <button type="button" class="urgencia-btn urgente" onclick="materialsModule.setUrgencia('Urgente', this)">
+                        <i class="fas fa-fire"></i> Urgente
+                    </button>
+                    <button type="button" class="urgencia-btn normal active" onclick="materialsModule.setUrgencia('Normal', this)">
+                        <i class="fas fa-clock"></i> Normal
+                    </button>
+                    <button type="button" class="urgencia-btn baixa" onclick="materialsModule.setUrgencia('Baixa', this)">
+                        <i class="fas fa-leaf"></i> Baixa
+                    </button>
+                </div>
+                <input type="hidden" id="matUrgencia" value="Normal">
+            </div>
+
+            <div class="form-group">
+                <label>Nome do requisitante <span class="req">*</span></label>
+                <input type="text" id="matNome" placeholder="Nome completo">
+            </div>
+
+            <div class="form-group">
+                <label>Quantidade</label>
+                <input type="number" id="matQuantidade" placeholder="1" min="1" value="1">
+            </div>
+
+            <div class="form-group form-group-full">
+                <label>Observações</label>
+                <textarea id="matObservacoes" placeholder="Detalhes adicionais sobre o material necessário..." rows="3"></textarea>
+            </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top:8px;">
+            <button class="btn-primary" onclick="materialsModule.save()">
+                <i class="fas fa-save"></i> Guardar Requisição
+            </button>
+            <button class="btn-cancel" onclick="materialsModule.closeModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
 <script src="dashboard.js"></script>
+<script src="materials.js"></script>
 
 </body>
 </html>

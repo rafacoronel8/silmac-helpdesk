@@ -1,0 +1,466 @@
+/* ===========================
+   MATERIALS SECTION
+   Adicionar ao styleDashboard.css
+=========================== */
+
+/* ── Section wrapper ── */
+.materials-section {
+    margin-top: 32px;
+}
+
+.materials-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.materials-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 3px;
+}
+
+.materials-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-left: 29px;
+}
+
+.btn-add-material {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 18px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.btn-add-material:hover {
+    background: #1a3f63;
+}
+
+/* ── Quick picker ── */
+.material-picker-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+}
+
+.picker-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+}
+
+.material-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #f0f4f8;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: var(--font);
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.chip:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(15,42,68,0.18);
+}
+
+.chip-icon {
+    font-size: 11px;
+    width: 16px;
+    text-align: center;
+}
+
+/* ── Table wrapper ── */
+.materials-table-wrap {
+    overflow: hidden;
+}
+
+.materials-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.materials-table thead tr {
+    border-bottom: 2px solid var(--border);
+}
+
+.materials-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: #f8fafc;
+    white-space: nowrap;
+}
+
+.materials-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eef2f7;
+    vertical-align: middle;
+}
+
+.materials-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.material-row:hover td {
+    background: #fafbfc;
+}
+
+/* ── Table cells ── */
+.mat-id {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    white-space: nowrap;
+}
+
+.mat-material {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.mat-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: #eef2f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--primary);
+    font-size: 12px;
+}
+
+.mat-material strong {
+    font-weight: 600;
+    color: var(--primary);
+    display: block;
+}
+
+.mat-qty {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--muted);
+    background: #eef2f7;
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin-left: 5px;
+    font-weight: 600;
+}
+
+.mat-obs {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    max-width: 240px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dept-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--primary);
+    background: #eef2f7;
+    border-radius: 5px;
+    padding: 3px 9px;
+    white-space: nowrap;
+}
+
+/* ── Urgency badges ── */
+.urg-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.urg-badge.urgente {
+    background: #fff0f0;
+    color: var(--danger);
+    border: 1px solid #fcd0d0;
+}
+
+.urg-badge.normal {
+    background: #fffbf0;
+    color: var(--accent2);
+    border: 1px solid #fde8c0;
+}
+
+.urg-badge.baixa {
+    background: #f0fff8;
+    color: var(--success);
+    border: 1px solid #b7f0d4;
+}
+
+.mat-nome {
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.mat-date {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ── Status select inside table ── */
+.mat-status-select {
+    padding: 5px 26px 5px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: var(--font);
+    font-weight: 500;
+    background: #fafbfc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath fill='%2364748b' d='M0 0l5 7 5-7z'/%3E%3C/svg%3E") no-repeat right 8px center;
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.mat-status-select.entregue {
+    background-color: #f0fff8;
+    border-color: #b7f0d4;
+    color: var(--success);
+}
+
+.mat-status-select.encomenda {
+    background-color: #fffbf0;
+    border-color: #fde8c0;
+    color: var(--accent2);
+}
+
+.mat-status-select.pendente {
+    background-color: #fafbfc;
+    color: var(--muted);
+}
+
+.mat-status-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* ── Delete button ── */
+.mat-delete-btn {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: #c0c9d4;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.15s;
+}
+
+.mat-delete-btn:hover {
+    background: #fff0f0;
+    border-color: #fcd0d0;
+    color: var(--danger);
+}
+
+/* ── Empty state inside table ── */
+.table-empty {
+    text-align: center;
+    padding: 40px 20px !important;
+    color: var(--muted);
+}
+
+.table-empty i {
+    font-size: 24px;
+    opacity: 0.3;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.table-empty p {
+    font-size: 13px;
+}
+
+/* ===========================
+   MATERIAL MODAL EXTRAS
+=========================== */
+.modal-card-wide {
+    max-width: 580px !important;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group-full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 0.01em;
+}
+
+.form-group .req {
+    color: var(--danger);
+    margin-left: 2px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: var(--font);
+    color: var(--text);
+    background: #fafbfc;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-group select {
+    background: #fafbfc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath fill='%2364748b' d='M0 0l5 7 5-7z'/%3E%3C/svg%3E") no-repeat right 10px center;
+    appearance: none;
+    padding-right: 28px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(15,42,68,0.07);
+    background: white;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 72px;
+}
+
+/* ── Urgencia toggle buttons ── */
+.urgencia-btns {
+    display: flex;
+    gap: 6px;
+}
+
+.urgencia-btn {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: #fafbfc;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.15s;
+}
+
+.urgencia-btn.urgente.active,
+.urgencia-btn.urgente:hover {
+    background: #fff0f0;
+    border-color: #fca5a5;
+    color: var(--danger);
+}
+
+.urgencia-btn.normal.active,
+.urgencia-btn.normal:hover {
+    background: #fffbf0;
+    border-color: #fde8c0;
+    color: var(--accent2);
+}
+
+.urgencia-btn.baixa.active,
+.urgencia-btn.baixa:hover {
+    background: #f0fff8;
+    border-color: #b7f0d4;
+    color: var(--success);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .materials-table th:nth-child(1),
+    .materials-table td:nth-child(1),
+    .materials-table th:nth-child(6),
+    .materials-table td:nth-child(6) {
+        display: none;
+    }
+
+    .mat-obs {
+        max-width: 140px;
+    }
+}

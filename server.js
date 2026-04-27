@@ -71,7 +71,6 @@ function requireAuth(req, res, next) {
     if (req.session && req.session.loggedIn) {
         return next();
     }
-    // Se for pedido de API (Accept: json ou path começa com /tickets)
     if (req.xhr || req.headers.accept?.includes('application/json') || req.path.startsWith('/tickets')) {
         return res.status(401).json({ error: 'Não autenticado', redirect: '/' });
     }
@@ -88,7 +87,6 @@ app.post('/login', loginLimiter, (req, res) => {
         "SELECT * FROM users WHERE username = ?",
         [username],
         (err, result) => {
-
             if (err || result.length === 0) {
                 return res.json({ success: false });
             }
@@ -99,7 +97,6 @@ app.post('/login', loginLimiter, (req, res) => {
                     req.session.username = username;
                     return res.json({ success: true });
                 }
-
                 return res.json({ success: false });
             });
         }
@@ -116,6 +113,73 @@ app.post('/logout', (req, res) => {
 });
 
 // =======================
+// MATERIAIS
+// =======================
+
+// GET /materials — listar todos
+app.get('/materials', requireAuth, (req, res) => {
+    db.query(
+        'SELECT * FROM materiais ORDER BY FIELD(urgencia,"Urgente","Normal","Baixa"), data_criacao DESC',
+        (err, rows) => {
+            if (err) {
+                console.error("Erro ao listar materiais:", err);
+                return res.status(500).json({ error: "Erro ao listar materiais" });
+            }
+            res.json(rows);
+        }
+    );
+});
+
+// POST /materials — criar novo
+app.post('/materials', requireAuth, (req, res) => {
+    const { material, departamento, urgencia, nome, quantidade, observacoes } = req.body;
+
+    db.query(
+        'INSERT INTO materiais (material, departamento, urgencia, nome, quantidade, observacoes) VALUES (?,?,?,?,?,?)',
+        [material, departamento, urgencia || 'Normal', nome, quantidade || 1, observacoes || null],
+        (err, result) => {
+            if (err) {
+                console.error("Erro ao criar material:", err);
+                return res.status(500).json({ error: "Erro ao criar requisição" });
+            }
+            res.json({ id: result.insertId });
+        }
+    );
+});
+
+// PUT /materials/:id — atualizar estado
+app.put('/materials/:id', requireAuth, (req, res) => {
+    const { estado } = req.body;
+
+    db.query(
+        'UPDATE materiais SET estado = ? WHERE id = ?',
+        [estado, req.params.id],
+        (err) => {
+            if (err) {
+                console.error("Erro ao atualizar material:", err);
+                return res.status(500).json({ error: "Erro ao atualizar estado" });
+            }
+            res.json({ ok: true });
+        }
+    );
+});
+
+// DELETE /materials/:id — remover
+app.delete('/materials/:id', requireAuth, (req, res) => {
+    db.query(
+        'DELETE FROM materiais WHERE id = ?',
+        [req.params.id],
+        (err) => {
+            if (err) {
+                console.error("Erro ao eliminar material:", err);
+                return res.status(500).json({ error: "Erro ao eliminar requisição" });
+            }
+            res.json({ ok: true });
+        }
+    );
+});
+
+// =======================
 // DASHBOARD (PROTEGIDO)
 // =======================
 app.get('/dashboard', requireAuth, (req, res) => {
@@ -126,7 +190,6 @@ app.get('/dashboard', requireAuth, (req, res) => {
 // CRIAR TICKET (PÚBLICO)
 // =======================
 app.post('/tickets', (req, res) => {
-
     const { nome, contacto, departamento, ilha, motivo, descricao, prioridade } = req.body;
 
     const sql = `
@@ -140,11 +203,7 @@ app.post('/tickets', (req, res) => {
             console.error(err);
             return res.status(500).json({ error: "Erro ao criar ticket" });
         }
-
-        res.json({
-            success: true,
-            id: result.insertId
-        });
+        res.json({ success: true, id: result.insertId });
     });
 });
 
@@ -152,17 +211,14 @@ app.post('/tickets', (req, res) => {
 // LISTAR TICKETS (PROTEGIDO)
 // =======================
 app.get('/tickets', requireAuth, (req, res) => {
-
     res.set('Cache-Control', 'no-store');
 
     db.query(
         "SELECT * FROM tickets ORDER BY id DESC",
         (err, result) => {
-
             if (err) {
                 return res.status(500).json({ error: "Erro ao buscar tickets" });
             }
-
             res.json(result);
         }
     );
@@ -172,7 +228,6 @@ app.get('/tickets', requireAuth, (req, res) => {
 // ATUALIZAR TICKET (ESTADO + SOLUÇÃO)
 // =======================
 app.put('/tickets/:id', requireAuth, (req, res) => {
-
     const id = req.params.id;
     const { estado, solucao } = req.body;
 
@@ -192,7 +247,6 @@ app.put('/tickets/:id', requireAuth, (req, res) => {
             console.error(err);
             return res.status(500).json({ error: "Erro ao atualizar ticket" });
         }
-
         res.json({ success: true });
     });
 });
@@ -201,16 +255,13 @@ app.put('/tickets/:id', requireAuth, (req, res) => {
 // APAGAR TICKET
 // =======================
 app.delete('/tickets/:id', requireAuth, (req, res) => {
-
     db.query(
         "DELETE FROM tickets WHERE id = ?",
         [req.params.id],
         (err) => {
-
             if (err) {
                 return res.status(500).json({ error: "Erro ao apagar ticket" });
             }
-
             res.json({ success: true });
         }
     );
