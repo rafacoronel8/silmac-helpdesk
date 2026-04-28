@@ -1181,3 +1181,51 @@ body {
         max-width: 140px;
     }
 }
+/* ===========================
+   TICKET RESOLVIDO — SINALIZAÇÃO
+=========================== */
+.ticket-card.resolved {
+    opacity: 0.62;
+    border-left-color: #2f855a !important;
+    background: #f9fffe;
+    transition: opacity 0.2s;
+}
+
+.ticket-card.resolved:hover {
+    opacity: 1;
+}
+
+.resolved-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #2f855a;
+    background: #f0fff8;
+    border: 1px solid #b7f0d4;
+    padding: 3px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.resolved-badge i {
+    font-size: 11px;
+}
+
+/* Stat card — Abertos */
+.stat-card.aberto .dot,
+.stat-card.aberto .value {
+    color: #000000;
+}
+.stat-card.aberto {
+    border-top-color: #3182ce;
+}
+
+.stat-card.andamento .dot,
+.stat-card.andamento .value {
+    color: #000000;
+}
+.stat-card.andamento {
+    border-top-color: #cebe2c;
+}

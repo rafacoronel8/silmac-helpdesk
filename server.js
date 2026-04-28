@@ -6,6 +6,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const rateLimit = require('express-rate-limit');
+//const helmet = require('helmet');
 
 const app = express();
 
@@ -15,6 +16,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+//app.use(helmet());
 
 app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
@@ -183,7 +186,7 @@ app.delete('/materials/:id', requireAuth, (req, res) => {
 // DASHBOARD (PROTEGIDO)
 // =======================
 app.get('/dashboard', requireAuth, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'tickets.html'));
+    res.sendFile(path.join(__dirname, 'private', 'tickets.html'));
 });
 
 // =======================

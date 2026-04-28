@@ -85,7 +85,7 @@ const dashboard = {
 
     updateStats: function () {
         let high = 0, medium = 0, low = 0;
-        let resolved = 0, andamento = 0, pausa = 0;
+        let resolved = 0, andamento = 0, aberto = 0;
 
         this.tickets.forEach(t => {
             if (t.prioridade === "Alta") high++;
@@ -94,7 +94,7 @@ const dashboard = {
 
             if (t.estado === "Resolvido") resolved++;
             else if (t.estado === "Em Andamento") andamento++;
-            else if (t.estado === "Em Pausa") pausa++;
+            else if (t.estado === "Aberto" || t.estado === "Pendente") aberto++;
         });
 
         document.getElementById('highCount').textContent = high;
@@ -102,7 +102,7 @@ const dashboard = {
         document.getElementById('lowCount').textContent = low;
         document.getElementById('resolvedCount').textContent = resolved;
         document.getElementById('andamentoCount').textContent = andamento;
-        document.getElementById('pausaCount').textContent = pausa;
+        document.getElementById('abertoCount').textContent = aberto;
 
         this.renderChart(high, medium, low);
     },
@@ -247,10 +247,13 @@ const dashboard = {
             return matchSearch && matchStatus && matchPriority;
         });
 
-        // 🔥 ORDENAR POR PRIORIDADE
+        // 🔥 ORDENAR POR ESTADO → depois por PRIORIDADE
+        const estadoOrder = { "Aberto": 4, "Pendente": 4, "Em Andamento": 3, "Resolvido": 1 };
+        const prioOrder   = { "Alta": 3, "Media": 2, "Baixa": 1 };
         filtered.sort((a, b) => {
-            const p = { "Alta": 3, "Media": 2, "Baixa": 1 };
-            return (p[b.prioridade] || 0) - (p[a.prioridade] || 0);
+            const eDiff = (estadoOrder[b.estado] || 0) - (estadoOrder[a.estado] || 0);
+            if (eDiff !== 0) return eDiff;
+            return (prioOrder[b.prioridade] || 0) - (prioOrder[a.prioridade] || 0);
         });
 
         // 🔢 CONTADOR
@@ -270,16 +273,20 @@ const dashboard = {
 
         filtered.forEach(t => {
             const pc = (t.prioridade || '').toLowerCase();
+            const isResolvido = t.estado === 'Resolvido';
 
             const div = document.createElement('div');
-            div.className = `ticket-card ${pc}`;
+            div.className = `ticket-card ${pc}${isResolvido ? ' resolved' : ''}`;
 
             div.innerHTML = `
                 <div class="ticket-header">
                     <span class="ticket-id">#${escapeHtml(t.id)}</span>
-                    <span class="priority-badge ${pc}">
-                        ${escapeHtml(t.prioridade)}
-                    </span>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        ${isResolvido ? `<span class="resolved-badge"><i class="fas fa-check-circle"></i> Resolvido</span>` : ''}
+                        <span class="priority-badge ${pc}">
+                            ${escapeHtml(t.prioridade)}
+                        </span>
+                    </div>
                 </div>
 
                 <div class="ticket-title">
@@ -296,7 +303,6 @@ const dashboard = {
                     <select onchange="dashboard.changeStatus(${t.id}, this.value)">
                         <option value="Aberto" ${t.estado === 'Aberto' || t.estado === 'Pendente' ? 'selected' : ''}>Aberto</option>
                         <option value="Em Andamento" ${t.estado === 'Em Andamento' ? 'selected' : ''}>Em Andamento</option>
-                        <option value="Em Pausa" ${t.estado === 'Em Pausa' ? 'selected' : ''}>Em Pausa</option>
                         <option value="Resolvido" ${t.estado === 'Resolvido' ? 'selected' : ''}>Resolvido</option>
                     </select>
                 </div>

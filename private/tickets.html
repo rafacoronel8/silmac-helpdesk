@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <link rel="icon" type="image/x-icon" href="images/silmac.ico">
-    <link rel="stylesheet" href="styleDashboard.css">
+    <link rel="stylesheet" href="/css/styleDashboard.css">
 </head>
 <body>
 
@@ -55,13 +55,13 @@
             <div class="label"><i class="fas fa-check" style="font-size:10px;"></i> Resolvidos</div>
             <div class="value" id="resolvedCount">0</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card andamento">
             <div class="label"><span class="dot" style="background:var(--accent2)"></span> Em Andamento</div>
             <div class="value" id="andamentoCount">0</div>
         </div>
-        <div class="stat-card">
-            <div class="label"><span class="dot" style="background:var(--muted)"></span> Em Pausa</div>
-            <div class="value" id="pausaCount">0</div>
+        <div class="stat-card aberto">
+            <div class="label"><span class="dot" style="background:#3182ce"></span> Abertos</div>
+            <div class="value" id="abertoCount">0</div>
         </div>
     </div>
 
@@ -83,7 +83,6 @@
                         <option value="">Todos os estados</option>
                         <option value="Aberto">Aberto</option>
                         <option value="Em Andamento">Em Andamento</option>
-                        <option value="Em Pausa">Em Pausa</option>
                         <option value="Resolvido">Resolvido</option>
                     </select>
                     <select id="filterPriority">
@@ -380,8 +379,8 @@
     </div>
 </div>
 
-<script src="dashboard.js"></script>
-<script src="materials.js"></script>
+<script src="/js/dashboard.js"></script>
+<script src="/js/materials.js"></script>
 
 </body>
 </html>
