@@ -27,9 +27,21 @@ function highlight(text, search) {
     return escapeHtml(text).replace(regex, '<mark>$1</mark>');
 }
 
+// 🔔 SOM DE NOTIFICAÇÃO
+const notificationSound = new Audio('/sounds/not.wav');
+
+// Desbloquear áudio na primeira interação do utilizador
+document.addEventListener('click', () => {
+    notificationSound.play().then(() => {
+        notificationSound.pause();
+        notificationSound.currentTime = 0;
+    }).catch(() => {});
+}, { once: true });
+
 const dashboard = {
 
     tickets: [],
+    lastTicketIds: null,   // null = primeira carga (não toca som)
     selectedTicketId: null,
     chart: null,
     viewMode: "grid",
@@ -74,7 +86,20 @@ const dashboard = {
                 return;
             }
 
-            this.tickets = await res.json();
+            const newTickets = await res.json();
+
+            // 🔔 Tocar som se houver tickets novos (ignora a primeira carga)
+            if (this.lastTicketIds !== null) {
+                const currentIds = new Set(newTickets.map(t => t.id));
+                const hasNew = newTickets.some(t => !this.lastTicketIds.has(t.id));
+                if (hasNew) {
+                    notificationSound.currentTime = 0;
+                    notificationSound.play().catch(err => console.log("Som bloqueado:", err));
+                }
+            }
+
+            this.lastTicketIds = new Set(newTickets.map(t => t.id));
+            this.tickets = newTickets;
 
             this.updateStats();
             this.render();
