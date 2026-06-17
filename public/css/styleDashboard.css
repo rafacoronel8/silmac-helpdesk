@@ -1229,3 +1229,27 @@ body {
 .stat-card.andamento {
     border-top-color: #cebe2c;
 }
+/* ===========================
+   TICKET TYPE CHIP
+=========================== */
+.ticket-type-row {
+    margin-bottom: 6px;
+}
+
+.ticket-type-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 10px;
+}
+
+.ticket-type-chip i {
+    color: var(--accent);
+    font-size: 10px;
+}

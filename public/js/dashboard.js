@@ -332,6 +332,12 @@ const dashboard = {
                     </select>
                 </div>
 
+                <div class="ticket-type-row">
+                    <span class="ticket-type-chip">
+                        <i class="fas fa-tag"></i> ${escapeHtml(t.motivo || 'Outro')}
+                    </span>
+                </div>
+
                 ${t.descricao ? `
                 <div class="ticket-description">
                     ${highlight(t.descricao, search)}
