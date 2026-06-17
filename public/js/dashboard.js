@@ -254,6 +254,7 @@ const dashboard = {
                 ${t.departamento}
                 ${t.ilha}
                 ${t.solucao || ''}
+                ${t.anydesk || ''}
             `;
 
             const text = normalize(rawText);
@@ -322,6 +323,7 @@ const dashboard = {
                     <span>👤 ${highlight(t.nome, search)}${t.contacto && t.contacto !== '---' ? ` · 📞 ${highlight(t.contacto, search)}` : ''}</span>
                     <span>🏢 ${highlight(t.departamento, search)}</span>
                     <span>📍 ${highlight(t.ilha, search)}</span>
+                    ${t.anydesk && t.anydesk !== '---' ? `<span class="anydesk-badge"><i class="fas fa-desktop"></i> AnyDesk: ${highlight(t.anydesk, search)}</span>` : ''}
                 </div>
 
                 <div class="status-badge-box">

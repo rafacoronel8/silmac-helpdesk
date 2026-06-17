@@ -193,15 +193,15 @@ app.get('/dashboard', requireAuth, (req, res) => {
 // CRIAR TICKET (PÚBLICO)
 // =======================
 app.post('/tickets', (req, res) => {
-    const { nome, contacto, departamento, ilha, motivo, descricao, prioridade } = req.body;
+    const { nome, contacto, anydesk, departamento, ilha, motivo, descricao, prioridade } = req.body;
 
     const sql = `
         INSERT INTO tickets
-        (nome, contacto, departamento, ilha, motivo, descricao, prioridade, estado, data_criacao)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'Aberto', NOW())
+        (nome, contacto, anydesk, departamento, ilha, motivo, descricao, prioridade, estado, data_criacao)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Aberto', NOW())
     `;
 
-    db.query(sql, [nome, contacto || null, departamento, ilha, motivo, descricao, prioridade], (err, result) => {
+    db.query(sql, [nome, contacto || null, anydesk || null, departamento, ilha, motivo, descricao, prioridade], (err, result) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ error: "Erro ao criar ticket" });

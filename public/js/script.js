@@ -72,13 +72,14 @@ const app = {
             return;
         }
 
+        const anydesk = document.getElementById('anydesk')?.value.trim();
         const descricao = document.getElementById('description')?.value.trim();
 
         try {
             const res = await fetch('/tickets', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nome, contacto, departamento, ilha, motivo, descricao, prioridade })
+                body: JSON.stringify({ nome, contacto, anydesk, departamento, ilha, motivo, descricao, prioridade })
             });
 
             const data = await res.json();
