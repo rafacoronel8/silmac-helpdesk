@@ -1,3 +1,28 @@
+// 🌗 MODO ESCURO
+function initTheme() {
+    const saved = localStorage.getItem('silmac-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    updateThemeIcon(saved);
+}
+
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('silmac-theme', next);
+    updateThemeIcon(next);
+}
+
+function updateThemeIcon(theme) {
+    const btn = document.getElementById('themeToggle');
+    if (!btn) return;
+    btn.innerHTML = theme === 'dark'
+        ? '<i class="fas fa-sun"></i>'
+        : '<i class="fas fa-moon"></i>';
+}
+
+initTheme();
+
 // 🔐 PROTEÇÃO XSS
 function escapeHtml(str) {
     if (!str) return '---';

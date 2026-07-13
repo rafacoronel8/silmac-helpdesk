@@ -27,6 +27,21 @@ function highlight(text, search) {
     return escapeHtml(text).replace(regex, '<mark>$1</mark>');
 }
 
+// 🌗 MODO ESCURO
+function initTheme() {
+    const saved = localStorage.getItem('silmac-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    updateThemeIcon(saved);
+}
+
+function updateThemeIcon(theme) {
+    const btn = document.getElementById('themeToggle');
+    if (!btn) return;
+    btn.innerHTML = theme === 'dark'
+        ? '<i class="fas fa-sun"></i>'
+        : '<i class="fas fa-moon"></i>';
+}
+
 // 🔔 SOM DE NOTIFICAÇÃO
 const notificationSound = new Audio('/sounds/not.wav');
 
@@ -47,6 +62,8 @@ const dashboard = {
     viewMode: "grid",
 
     init: async function () {
+        initTheme();
+
         await this.loadTickets();
 
         // 🔁 AUTO REFRESH
@@ -130,6 +147,7 @@ const dashboard = {
         document.getElementById('abertoCount').textContent = aberto;
 
         this.renderChart(high, medium, low);
+        this.updateInsights(resolved);
     },
 
     // 📊 GRÁFICO
@@ -160,6 +178,192 @@ const dashboard = {
                 cutout: '65%'
             }
         });
+    },
+
+    // 🌗 TOGGLE MODO ESCURO
+    toggleTheme: function () {
+        const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('silmac-theme', next);
+        updateThemeIcon(next);
+        if (this.chart) this.renderChart(
+            this.tickets.filter(t => t.prioridade === 'Alta').length,
+            this.tickets.filter(t => t.prioridade === 'Media').length,
+            this.tickets.filter(t => t.prioridade === 'Baixa').length
+        );
+    },
+
+    // 🎫 NOVO TICKET (a partir do dashboard)
+    openTicketModal: function () {
+        document.getElementById('ticketModal').classList.add('open');
+        setTimeout(() => document.getElementById('tkNome')?.focus(), 100);
+    },
+
+    closeTicketModal: function () {
+        document.getElementById('ticketModal').classList.remove('open');
+        ['tkNome', 'tkContacto', 'tkAnydesk', 'tkDescricao'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        ['tkDepartamento', 'tkIlha', 'tkCategory'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+    },
+
+    submitTicket: async function () {
+        const nome = document.getElementById('tkNome')?.value.trim();
+        const contacto = document.getElementById('tkContacto')?.value.trim();
+        const anydesk = document.getElementById('tkAnydesk')?.value.trim();
+        const departamento = document.getElementById('tkDepartamento')?.value;
+        const ilha = document.getElementById('tkIlha')?.value;
+        const descricao = document.getElementById('tkDescricao')?.value.trim();
+
+        const categoryValue = document.getElementById('tkCategory')?.value || "";
+        const [motivo, prioridade] = categoryValue.split('|');
+
+        const requiredIds = [];
+        if (!nome) requiredIds.push('tkNome');
+        if (!ilha) requiredIds.push('tkIlha');
+        if (!motivo || !prioridade) requiredIds.push('tkCategory');
+
+        if (requiredIds.length) {
+            requiredIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.style.borderColor = 'var(--danger)';
+                setTimeout(() => el.style.borderColor = '', 1500);
+            });
+            return;
+        }
+
+        try {
+            const res = await fetch('/tickets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome, contacto, anydesk, departamento, ilha, motivo, descricao, prioridade })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok || !data.success) {
+                alert(data.error || 'Erro ao criar ticket');
+                return;
+            }
+
+            this.closeTicketModal();
+            await this.loadTickets();
+
+        } catch (error) {
+            console.error("Erro ao criar ticket:", error);
+            alert('Erro ao criar ticket. Tenta novamente.');
+        }
+    },
+
+    // 📊 MINI DASHBOARD / INSIGHTS
+    updateInsights: function (resolvedCount) {
+        // Tickets hoje
+        const todayStr = new Date().toDateString();
+        const todayCount = this.tickets.filter(t =>
+            t.data_criacao && new Date(t.data_criacao).toDateString() === todayStr
+        ).length;
+        const todayEl = document.getElementById('todayCount');
+        if (todayEl) todayEl.textContent = todayCount;
+
+        // Utilizador com mais pedidos (agrupado por primeiro nome, normalizado)
+        // Ex: "Natalino", "natalino", "Natalino Piedade" contam como a mesma pessoa
+        const groups = {};
+        this.tickets.forEach(t => {
+            if (!t.nome) return;
+            const firstRaw = t.nome.trim().split(/\s+/)[0];
+            if (!firstRaw) return;
+            const key = normalize(firstRaw);
+            if (!groups[key]) {
+                groups[key] = {
+                    count: 0,
+                    display: firstRaw.charAt(0).toUpperCase() + firstRaw.slice(1).toLowerCase()
+                };
+            }
+            groups[key].count++;
+        });
+
+        const ranked = Object.values(groups).sort((a, b) => b.count - a.count);
+
+        const topNameEl = document.getElementById('topUserName');
+        const topCountEl = document.getElementById('topUserCount');
+        if (topNameEl && topCountEl) {
+            if (ranked.length) {
+                topNameEl.textContent = ranked[0].display;
+                topCountEl.textContent = `${ranked[0].count} ticket${ranked[0].count !== 1 ? 's' : ''}`;
+            } else {
+                topNameEl.textContent = '—';
+                topCountEl.textContent = '';
+            }
+        }
+
+        const rankingList = document.getElementById('rankingList');
+        if (rankingList) {
+            if (!ranked.length) {
+                rankingList.innerHTML = '<div class="insight-sub">Sem dados ainda.</div>';
+            } else {
+                rankingList.innerHTML = ranked.slice(0, 5).map((r, i) => `
+                    <div class="ranking-row">
+                        <span class="ranking-pos">${i + 1}</span>
+                        <span class="ranking-name">${escapeHtml(r.display)}</span>
+                        <span class="ranking-count">${r.count}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        this.updateMilestone(resolvedCount);
+    },
+
+    // 🏆 PRÉMIOS (100, 150, 200... — 50 a 50 tickets resolvidos, total da equipa)
+    updateMilestone: function (resolvedCount) {
+        const START = 100;
+        const STEP = 50;
+
+        let progress, total, next;
+
+        if (resolvedCount < START) {
+            progress = resolvedCount;
+            total = START;
+            next = START;
+        } else {
+            const k = Math.floor((resolvedCount - START) / STEP) + 1;
+            next = START + STEP * k;
+            const stepStart = next - STEP;
+            progress = resolvedCount - stepStart;
+            total = STEP;
+        }
+
+        const progressEl = document.getElementById('milestoneProgress');
+        const subEl = document.getElementById('milestoneSub');
+        if (progressEl) progressEl.textContent = `${progress} / ${total}`;
+        if (subEl) subEl.textContent = `Próxima meta: ${next} tickets resolvidos`;
+
+        // Verificar se um novo prémio foi alcançado (total da equipa)
+        if (resolvedCount >= START) {
+            const highestMilestone = START + STEP * Math.floor((resolvedCount - START) / STEP);
+            const last = parseInt(localStorage.getItem('silmac-last-milestone') || '0', 10);
+            if (highestMilestone > last) {
+                localStorage.setItem('silmac-last-milestone', String(highestMilestone));
+                this.showMilestoneToast(highestMilestone);
+            }
+        }
+    },
+
+    showMilestoneToast: function (value) {
+        const toast = document.getElementById('milestoneToast');
+        if (!toast) return;
+        const titleEl = document.getElementById('milestoneToastTitle');
+        const subEl = document.getElementById('milestoneToastSub');
+        if (titleEl) titleEl.textContent = 'Parabéns, equipa! 🎉';
+        if (subEl) subEl.textContent = `${value} tickets resolvidos!`;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 5000);
     },
 
     // 🔄 TOGGLE GRID / LIST
@@ -367,8 +571,15 @@ document.getElementById('solutionModal')?.addEventListener('click', function(e) 
     if (e.target === this) dashboard.closeSolutionModal();
 });
 
+document.getElementById('ticketModal')?.addEventListener('click', function(e) {
+    if (e.target === this) dashboard.closeTicketModal();
+});
+
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') dashboard.closeSolutionModal();
+    if (e.key === 'Escape') {
+        dashboard.closeSolutionModal();
+        dashboard.closeTicketModal();
+    }
 });
 
 window.onload = () => dashboard.init();

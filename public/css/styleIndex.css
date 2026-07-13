@@ -17,6 +17,7 @@
     --muted:      #64748b;
     --success:    #2f855a;
     --danger:     #c53030;
+    --heading:    var(--primary);
     --radius:     12px;
     --shadow:     0 2px 16px rgba(0,0,0,0.08);
     --font:       'IBM Plex Sans', sans-serif;
@@ -102,7 +103,7 @@ body {
 .page-intro h1 {
     font-size: 22px;
     font-weight: 600;
-    color: var(--primary);
+    color: var(--heading);
     margin-bottom: 6px;
 }
 
@@ -294,14 +295,14 @@ body {
     align-items: center;
     justify-content: center;
     margin-bottom: 14px;
-    color: var(--primary);
+    color: var(--heading);
     font-size: 18px;
 }
 
 .modal-title {
     font-size: 18px;
     font-weight: 600;
-    color: var(--primary);
+    color: var(--heading);
     margin-bottom: 4px;
 }
 
@@ -367,3 +368,74 @@ body {
         font-size: 19px;
     }
 }
+/* ===========================
+   THEME TOGGLE BUTTON
+=========================== */
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: transparent;
+    color: rgba(255,255,255,0.85);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border-color: rgba(255,255,255,0.4);
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ===========================
+   DARK MODE
+=========================== */
+[data-theme="dark"] {
+    --primary:    #1c3a5c;
+    --accent:     #d9b784;
+    --bg:         #10141a;
+    --surface:    #1a1f27;
+    --border:     #2a313c;
+    --text:       #e4e8ee;
+    --muted:      #8b96a5;
+    --success:    #48bb78;
+    --danger:     #f56565;
+    --heading:    #dbe4ee;
+}
+
+[data-theme="dark"] body { background: var(--bg); }
+
+[data-theme="dark"] .navbar { background: #0d1218; }
+
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .form-group textarea {
+    background-color: #232a35;
+    color: var(--text);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .form-group input:focus,
+[data-theme="dark"] .form-group select:focus,
+[data-theme="dark"] .form-group textarea:focus {
+    background-color: #262e3a;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(217,183,132,0.15) !important;
+}
+
+[data-theme="dark"] .modal-icon { background: #232a35; }
+
+[data-theme="dark"] .toast { background: var(--surface); }
+
+[data-theme="dark"] .nav-dashboard { color: rgba(255,255,255,0.85); }

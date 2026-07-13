@@ -13,6 +13,7 @@
     --white: #ffffff;
     --text: #2d3748;
     --border: #e2e8f0;
+    --heading: var(--primary);
 }
 
 /* BODY */
@@ -50,7 +51,7 @@ body {
 }
 
 .navbar h1 {
-    color: var(--primary);
+    color: var(--heading);
     font-size: 1.5rem;
     font-weight: 700;
 }
@@ -63,7 +64,7 @@ body {
 .nav-tab {
     background: transparent;
     border: 2px solid transparent;
-    color: var(--primary);
+    color: var(--heading);
     padding: 10px 20px;
     border-radius: 20px;
     cursor: pointer;
@@ -96,7 +97,7 @@ body {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: var(--primary);
+    color: var(--heading);
 }
 
 .form-group input,
@@ -155,7 +156,7 @@ body {
 
 .dashboard-header h2 {
     margin-bottom: 1rem;
-    color: var(--primary);
+    color: var(--heading);
 }
 
 /* STATS */
@@ -349,4 +350,29 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+/* ===========================
+   DARK MODE
+=========================== */
+[data-theme="dark"] {
+    --primary: #1c3a5c;
+    --secondary: #d9b784;
+    --light: #10141a;
+    --white: #1a1f27;
+    --text: #e4e8ee;
+    --border: #2a313c;
+    --heading: #dbe4ee;
+}
+
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .form-group textarea {
+    background-color: #232a35;
+    color: var(--text);
+}
+
+[data-theme="dark"] .form-group input:focus,
+[data-theme="dark"] .form-group select:focus,
+[data-theme="dark"] .form-group textarea:focus {
+    border-color: var(--secondary) !important;
 }

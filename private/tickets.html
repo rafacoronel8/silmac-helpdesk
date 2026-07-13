@@ -21,6 +21,9 @@
         <div class="nav-tabs">
             <a href="/" class="nav-tab"><i class="fas fa-ticket-alt"></i> Criar Ticket</a>
             <a href="/dashboard" class="nav-tab active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <button class="theme-toggle" id="themeToggle" onclick="dashboard.toggleTheme()" title="Alternar modo escuro">
+                <i class="fas fa-moon"></i>
+            </button>
         </div>
     </div>
 </nav>
@@ -32,9 +35,44 @@
             <h1 class="page-title">Dashboard de Tickets</h1>
             <p class="page-subtitle">Gestão de suporte técnico — Silmac</p>
         </div>
-        <div class="live-badge">
-            <span class="live-dot"></span>
-            Atualização automática
+        <div class="page-header-actions">
+            <div class="live-badge">
+                <span class="live-dot"></span>
+                Atualização automática
+            </div>
+            <button class="btn-new-ticket" onclick="dashboard.openTicketModal()">
+                <i class="fas fa-plus"></i>
+                Novo Ticket
+            </button>
+        </div>
+    </div>
+
+    <!-- ===========================
+         MINI DASHBOARD / INSIGHTS
+    =========================== -->
+    <div class="insights-grid">
+        <div class="insight-card today">
+            <div class="insight-icon"><i class="fas fa-calendar-day"></i></div>
+            <div>
+                <div class="insight-label">Tickets Hoje</div>
+                <div class="insight-value" id="todayCount">0</div>
+            </div>
+        </div>
+        <div class="insight-card top-user">
+            <div class="insight-icon"><i class="fas fa-crown"></i></div>
+            <div>
+                <div class="insight-label">Mais Pedidos</div>
+                <div class="insight-value" id="topUserName">—</div>
+                <div class="insight-sub" id="topUserCount"></div>
+            </div>
+        </div>
+        <div class="insight-card milestone">
+            <div class="insight-icon"><i class="fas fa-trophy"></i></div>
+            <div>
+                <div class="insight-label">Resolvidos (Meta)</div>
+                <div class="insight-value" id="milestoneProgress">0 / 50</div>
+                <div class="insight-sub" id="milestoneSub">Próximo prémio a caminho</div>
+            </div>
         </div>
     </div>
 
@@ -112,6 +150,12 @@
                 <h3><i class="fas fa-chart-pie" style="color:var(--accent);"></i>Por Prioridade</h3>
                 <div class="chart-wrap">
                     <canvas id="priorityChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-panel">
+                <h3><i class="fas fa-ranking-star" style="color:var(--accent);"></i>Top Utilizadores</h3>
+                <div class="ranking-list" id="rankingList">
+                    <div class="insight-sub">Sem dados ainda.</div>
                 </div>
             </div>
             <div class="chart-panel">
@@ -376,6 +420,106 @@
             </button>
             <button class="btn-cancel" onclick="materialsModule.closeModal()">Cancelar</button>
         </div>
+    </div>
+</div>
+
+<!-- NEW TICKET MODAL -->
+<div id="ticketModal" class="modal-overlay">
+    <div class="modal-card modal-card-wide">
+        <div class="modal-title">
+            <i class="fas fa-ticket-alt" style="color:var(--accent);margin-right:8px;"></i>
+            Novo Ticket
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nome completo <span class="req">*</span></label>
+                <input type="text" id="tkNome" placeholder="Ex: João Silva">
+            </div>
+            <div class="form-group">
+                <label>Contacto</label>
+                <input type="text" id="tkContacto" placeholder="Ex: 991 23 57">
+            </div>
+
+            <div class="form-group">
+                <label>Nº AnyDesk</label>
+                <input type="text" id="tkAnydesk" placeholder="Ex: 123 456 789" inputmode="numeric">
+            </div>
+            <div class="form-group">
+                <label>Departamento</label>
+                <select id="tkDepartamento">
+                    <option value="">— Selecionar —</option>
+                    <option value="RH">RH</option>
+                    <option value="Recepcao">Receção</option>
+                    <option value="Contabilidade">Contabilidade</option>
+                    <option value="Gestor HSSG">Gestão</option>
+                    <option value="Financeiro">Financeiro</option>
+                    <option value="Vendas">Vendas</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="TI">TI</option>
+                    <option value="Geral">Direção Geral</option>
+                    <option value="Vigilancia">Vigilância Humana</option>
+                    <option value="Comercial">Comercial</option>
+                    <option value="Outro">Outro</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Ilha <span class="req">*</span></label>
+                <select id="tkIlha">
+                    <option value="">— Selecionar —</option>
+                    <option value="Santo Antão">Santo Antão</option>
+                    <option value="São Vicente">São Vicente</option>
+                    <option value="Sal">Sal</option>
+                    <option value="Boa Vista">Boa Vista</option>
+                    <option value="Maio">Maio</option>
+                    <option value="Santiago">Santiago</option>
+                    <option value="Fogo">Fogo</option>
+                    <option value="Brava">Brava</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Tipo de problema <span class="req">*</span></label>
+                <select id="tkCategory">
+                    <option value="">— Selecionar —</option>
+                    <option value="Email não funciona|Media">Email não funciona</option>
+                    <option value="Email suspeito|Alta">Email Suspeito</option>
+                    <option value="Issues Backup|Alta">Backup</option>
+                    <option value="Internet/Rede|Alta">Internet / Rede não funciona</option>
+                    <option value="Software|Media">Programa não abre</option>
+                    <option value="Hardware|Media">Hardware / Impressora</option>
+                    <option value="Senha|Media">Esqueci a senha</option>
+                    <option value="VPN|Alta">VPN não conecta</option>
+                    <option value="Office|Media">Office desatualizado</option>
+                    <option value="Telefone|Baixa">Telefone</option>
+                    <option value="Primavera|Media">Primavera</option>
+                    <option value="Documento|Baixa">Ajuda com documento</option>
+                    <option value="Silgest|Baixa">Silgest</option>
+                    <option value="Outro|Baixa">Outro problema</option>
+                </select>
+            </div>
+
+            <div class="form-group form-group-full">
+                <label>Descrição</label>
+                <textarea id="tkDescricao" placeholder="Descreve o problema com mais detalhe..." rows="3"></textarea>
+            </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top:8px;">
+            <button class="btn-primary" onclick="dashboard.submitTicket()">
+                <i class="fas fa-paper-plane"></i> Criar Ticket
+            </button>
+            <button class="btn-cancel" onclick="dashboard.closeTicketModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MILESTONE TOAST -->
+<div class="milestone-toast" id="milestoneToast">
+    <div class="milestone-emoji">🏆</div>
+    <div>
+        <div class="milestone-title" id="milestoneToastTitle">Parabéns, equipa!</div>
+        <div class="milestone-sub" id="milestoneToastSub"></div>
     </div>
 </div>
 
