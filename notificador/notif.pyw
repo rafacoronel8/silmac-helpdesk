@@ -3,7 +3,7 @@ import requests, os, json, winsound, webbrowser
 
 # ===== CONFIGURAÇÃO =====
 BASE = "http://192.168.1.32:3000"                      # helpdesk dentro da rede interna
-TOKEN = "COLOCAR_AQUI_O_NOTIF_TOKEN"                   # igual ao NOTIF_TOKEN do .env na VM
+TOKEN = "5f52f4f8a78de1af7936b3680b97f6f09eaac10faf451215"                   # igual ao NOTIF_TOKEN do .env na VM
 URL_DASHBOARD = "http://helpdesk.silmac.cv:6080/dashboard"
 INTERVALO_MS = 5000                                    # consulta a cada 5 segundos
 DURACAO_MS = 20000                                     # pop-up fica 20 segundos
