@@ -50,20 +50,30 @@ const loginLimiter = rateLimit({
 });
 
 // =======================
-// MYSQL
+// MYSQL (POOL)
+// O pool reabre ligações sozinho quando o MySQL as fecha por inatividade
 // =======================
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
-    database: process.env.DB_NAME
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 10000
 });
 
-db.connect(err => {
+db.on('error', err => {
+    console.error("Erro no pool MySQL:", err);
+});
+
+db.getConnection((err, connection) => {
     if (err) {
         console.error("Erro MySQL:", err);
     } else {
         console.log("Ligado ao MySQL");
+        connection.release();
     }
 });
 
@@ -187,6 +197,45 @@ app.delete('/materials/:id', requireAuth, (req, res) => {
 // =======================
 app.get('/dashboard', requireAuth, (req, res) => {
     res.sendFile(path.join(__dirname, 'private', 'tickets.html'));
+});
+
+// =======================
+// NOTIFICAÇÕES DE NOVOS TICKETS (usado pelo programa no PC)
+// Protegido por token no cabeçalho x-token (NOTIF_TOKEN no .env)
+// =======================
+app.get('/api/notificacoes/novos', (req, res) => {
+    const token = process.env.NOTIF_TOKEN;
+
+    // Se o token não estiver definido no .env, a rota fica sempre bloqueada
+    if (!token || req.headers['x-token'] !== token) {
+        return res.status(401).json({ erro: 'nao autorizado' });
+    }
+
+    const desde = parseInt(req.query.desde, 10) || 0;
+
+    db.query('SELECT MAX(id) AS max_id FROM tickets', (err, maxRows) => {
+        if (err) {
+            console.error("Erro notificações (max):", err);
+            return res.status(500).json({ erro: 'erro na base de dados' });
+        }
+
+        db.query(
+            `SELECT id, nome, motivo AS problema, descricao, prioridade,
+                    data_criacao AS criado_em
+             FROM tickets
+             WHERE id > ?
+             ORDER BY id ASC
+             LIMIT 20`,
+            [desde],
+            (err2, tickets) => {
+                if (err2) {
+                    console.error("Erro notificações (lista):", err2);
+                    return res.status(500).json({ erro: 'erro na base de dados' });
+                }
+                res.json({ max_id: (maxRows[0] && maxRows[0].max_id) || 0, tickets });
+            }
+        );
+    });
 });
 
 // =======================
